@@ -13,8 +13,8 @@ public class MergeSort extends AbstractSort{
 
     @Override
     public void sort(Comparable[] objects, int begin, int end) {
-        if(end>begin) {
-            final int mid = (end - begin) / 2;
+        if(end-begin>1) {
+            final int mid = begin + (end - begin) / 2;
             sort(objects,begin,mid);
             sort(objects,mid ,end);
             merge(objects,begin,end,mid,workBuffer);
@@ -33,7 +33,7 @@ public class MergeSort extends AbstractSort{
      */
     public static void merge(Comparable[] objects,int begin,int end,int mid,Comparable[] work){
         int left = begin;
-        int leftEnd = mid+1;
+        int leftEnd = mid;
         int right = mid;
         int rightEnd = end;
         int pos = 0;
@@ -44,7 +44,7 @@ public class MergeSort extends AbstractSort{
         */
          while(left!=leftEnd && right!=rightEnd){
             if(objects[left].compareTo(objects[right])<=0){
-                //the head of left half is smaller than or equals to the head of right half
+                //[left] is smaller than or equals to [right], pick and copy [left] as the winner
                 work[pos++] = objects[left++];
             }
             else{
