@@ -1,11 +1,13 @@
 package algo;
 
 
+import concurrent.ForkJoinMergeSort;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ForkJoinPool;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -21,6 +23,7 @@ public class TestSort {
     private Integer toBeSorted [];
 
     static {
+        //make sure this only runs once, so the runtime of each individual test are comparable.
         Object [] random = (new Random()).ints(size).boxed().toArray();
         data = Arrays.copyOf( random, random.length, Integer[].class);
         sortedData = data.clone();
@@ -33,15 +36,19 @@ public class TestSort {
     }
 
     @Test
-    public void testMergeSort(){
+    public void testMergeSort1(){
         MergeSort mergeSort = new MergeSort(size);
         mergeSort.sort(toBeSorted);
         assertThat(sortedData,is(toBeSorted));
     }
 
+    /*Sort2 leverages fork/join framework to parallelize the sorting.
+      30% faster than testMergeSort1() on my 8-core (logical) i7 6700K
+    */
     @Test
     public void testMergeSort2(){
-        Integer d1 [] = sortedData.clone();
-        assertThat(sortedData,is(d1));
+        ForkJoinMergeSort sorter = new ForkJoinMergeSort(toBeSorted,0,size);
+        ForkJoinPool.commonPool().invoke(sorter);
+        assertThat(sortedData,is(toBeSorted));
     }
 }

@@ -1,6 +1,9 @@
 package algo;
 
+import java.util.Arrays;
+
 public class MergeSort extends AbstractSort{
+    public final static int SMALL_ENOUGH = 16;
     final Comparable[] workBuffer;
 
     /**
@@ -13,7 +16,11 @@ public class MergeSort extends AbstractSort{
 
     @Override
     public void sort(Comparable[] objects, int begin, int end) {
-        if(end-begin>1) {
+        final int size = end-begin;
+        if(size<SMALL_ENOUGH){
+            Arrays.sort(objects,begin,end);
+        }
+        else{
             final int mid = begin + (end - begin) / 2;
             sort(objects,begin,mid);
             sort(objects,mid ,end);

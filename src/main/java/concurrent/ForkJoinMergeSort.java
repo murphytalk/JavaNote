@@ -1,43 +1,44 @@
 package concurrent;
 
 import algo.MergeSort;
-import algo.Sort;
 
 import java.util.Arrays;
 import java.util.concurrent.RecursiveAction;
 
 /**
- * Using
+ *  Parallel version of merge sort
  */
 public class ForkJoinMergeSort extends RecursiveAction {
-    private final static int SMALL_ENOUGH = 16;
     private final Comparable[] data;
-    private final int start, end;
-    public ForkJoinMergeSort(Comparable[] data,int start,int end) {
+    private final Comparable[] work;
+    private final int begin, end;
+
+    public ForkJoinMergeSort(Comparable[] data, int begin, int end) {
         this.data = data;
-        this.start = start;
+        this.begin = begin;
         this.end = end;
+        this.work = new Comparable[end-begin];
     }
 
     public int size(){
-        return end - start;
+        return end - begin;
     }
 
-    private void merge(Comparable left, Comparable right){
-//        Sort sorter = new MergeSort();
-        //sorter.sort(data,left,right);
+    private void merge(int mid){
+        MergeSort.merge(data,begin,end,mid,work);
     }
 
     protected void compute() {
         final int size = size();
-        if(size<SMALL_ENOUGH){
-            Arrays.sort(data,0,size);
+        if(size<MergeSort.SMALL_ENOUGH){
+            Arrays.sort(data,begin,end);
         }
         else{
-            final int mid = size / 2;
-            ForkJoinMergeSort left  = new ForkJoinMergeSort(data,start,start+mid);
-            ForkJoinMergeSort right = new ForkJoinMergeSort(data,start+mid,end);
+            final int mid = begin + size / 2;
+            ForkJoinMergeSort left  = new ForkJoinMergeSort(data, begin, mid);
+            ForkJoinMergeSort right = new ForkJoinMergeSort(data, mid,end);
             invokeAll(left,right);
+            merge(mid);
         }
     }
 }
