@@ -9,9 +9,9 @@ import java.util.concurrent.RecursiveAction;
  *  Parallel version of merge sort
  */
 public class ForkJoinMergeSort extends RecursiveAction {
-    private final Comparable[] data;
-    private final Comparable[] work;
-    private final int begin, end;
+    protected final Comparable[] data;
+    protected final Comparable[] work;
+    protected final int begin, end;
 
     public ForkJoinMergeSort(Comparable[] data, int begin, int end) {
         this.data = data;
@@ -24,7 +24,7 @@ public class ForkJoinMergeSort extends RecursiveAction {
         return end - begin;
     }
 
-    private void merge(int mid){
+    protected void merge(int mid){
         MergeSort.merge(data,begin,end,mid,work);
     }
 
@@ -34,7 +34,7 @@ public class ForkJoinMergeSort extends RecursiveAction {
             Arrays.sort(data,begin,end);
         }
         else{
-            final int mid = begin + size / 2;
+            final int mid = begin + (size >>> 1 );
             ForkJoinMergeSort left  = new ForkJoinMergeSort(data, begin, mid);
             ForkJoinMergeSort right = new ForkJoinMergeSort(data, mid,end);
             invokeAll(left,right);

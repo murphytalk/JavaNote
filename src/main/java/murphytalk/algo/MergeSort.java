@@ -21,7 +21,7 @@ public class MergeSort extends AbstractSort{
             Arrays.sort(objects,begin,end);
         }
         else{
-            final int mid = begin + (end - begin) / 2;
+            final int mid = begin + ((end - begin) >>>1);
             sort(objects,begin,mid);
             sort(objects,mid ,end);
             merge(objects,begin,end,mid,workBuffer);

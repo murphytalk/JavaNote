@@ -3,7 +3,6 @@ package murphytalk.algo;
 
 import murphytalk.concurrent.ForkJoinMergeSort;
 import murphytalk.test.StopWatch;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -18,9 +17,9 @@ import static org.hamcrest.core.Is.is;
  */
 public class TestSort {
     private static final int size = 1_000_000;
+    private static final int repeat = 5;
     private static final Integer data [];
     private static final Integer sortedData [];
-    private static final StopWatch stopwatch;
 
     private Integer toBeSorted [];
 
@@ -30,12 +29,6 @@ public class TestSort {
         data = Arrays.copyOf( random, random.length, Integer[].class);
         sortedData = data.clone();
         Arrays.sort(sortedData);
-        stopwatch = new StopWatch("TestSort");
-    }
-
-    @Before
-    public void setup(){
-        toBeSorted = data.clone();
     }
 
     /* The vanilla array sort uses TimSort.
@@ -44,7 +37,10 @@ public class TestSort {
     //@Ignore
     @Test
     public void testArraySort(){
-        stopwatch.measure("testArraySort", ()-> Arrays.sort(toBeSorted));
+        StopWatch.measure("testArraySort", ()-> {
+            toBeSorted = data.clone();
+            Arrays.sort(toBeSorted);
+        },repeat);
         assertThat(sortedData,is(toBeSorted));
     }
 
@@ -52,8 +48,11 @@ public class TestSort {
      */
     @Test
     public void testMergeSort(){
-        final MergeSort mergeSort = new MergeSort(size);
-        stopwatch.measure("testMergeSort", ()-> mergeSort.sort(toBeSorted));
+        StopWatch.measure("testMergeSort", ()-> {
+            final MergeSort mergeSort = new MergeSort(size);
+            toBeSorted = data.clone();
+            mergeSort.sort(toBeSorted);
+        },repeat);
         assertThat(sortedData,is(toBeSorted));
     }
 
@@ -62,8 +61,11 @@ public class TestSort {
     */
     @Test
     public void testMergeSortForkJoin(){
-        final ForkJoinMergeSort sorter = new ForkJoinMergeSort(toBeSorted,0,size);
-        stopwatch.measure("testMergeSortForkJoin", ()-> ForkJoinPool.commonPool().invoke(sorter));
+        StopWatch.measure("testMergeSortForkJoin", ()-> {
+            toBeSorted = data.clone();
+            final ForkJoinMergeSort sorter = new ForkJoinMergeSort(toBeSorted,0,size);
+            ForkJoinPool.commonPool().invoke(sorter);
+        },repeat);
         assertThat(sortedData,is(toBeSorted));
     }
 }
