@@ -1,4 +1,4 @@
-package algo;
+package murphytalk.algo;
 
 public interface Sort {
     void sort(Comparable[] objects);

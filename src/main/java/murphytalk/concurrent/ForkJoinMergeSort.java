@@ -1,6 +1,6 @@
-package concurrent;
+package murphytalk.concurrent;
 
-import algo.MergeSort;
+import murphytalk.algo.MergeSort;
 
 import java.util.Arrays;
 import java.util.concurrent.RecursiveAction;

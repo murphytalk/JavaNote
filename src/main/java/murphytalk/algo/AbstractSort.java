@@ -1,4 +1,4 @@
-package algo;
+package murphytalk.algo;
 
 public abstract class AbstractSort implements Sort{
     @Override

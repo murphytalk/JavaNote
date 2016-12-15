@@ -1,4 +1,4 @@
-package algo;
+package murphytalk.algo;
 
 import java.util.Arrays;
 
