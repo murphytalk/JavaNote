@@ -1,7 +1,7 @@
-package murphytalk.algo;
+package murphytalk.concurrent;
 
 
-import murphytalk.concurrent.ForkJoinMergeSort;
+import murphytalk.algo.MergeSort;
 import murphytalk.test.StopWatch;
 import org.junit.Test;
 

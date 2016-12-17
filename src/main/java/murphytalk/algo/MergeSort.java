@@ -2,7 +2,7 @@ package murphytalk.algo;
 
 import java.util.Arrays;
 
-public class MergeSort extends AbstractSort{
+public class MergeSort implements Sort{
     public final static int SMALL_ENOUGH = 16;
     final Comparable[] workBuffer;
 

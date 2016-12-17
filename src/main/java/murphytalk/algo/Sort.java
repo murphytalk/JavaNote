@@ -1,7 +1,10 @@
 package murphytalk.algo;
 
 public interface Sort {
-    void sort(Comparable[] objects);
+    default void sort(Comparable[] objects) {
+        sort(objects,0,objects.length);
+    }
+
     /**
      * Sort array in place
      * @param objects the array to sort
