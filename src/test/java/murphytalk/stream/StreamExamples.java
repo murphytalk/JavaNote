@@ -1,11 +1,13 @@
 package murphytalk.stream;
 
 import com.sun.java.swing.plaf.windows.WindowsTreeUI;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import murphytalk.utils.Files;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,8 +68,11 @@ public class StreamExamples {
 
     @Test
     public void top20Frequency() throws URISyntaxException {
+        final Pattern word = Pattern.compile("\\w+");
         Files.readTextFileInZip( Files.getFileFromClassPath(this.getClass(),"/test-data.zip"), "bible.txt", ss ->
             ss.flatMap(line -> Arrays.asList(line.split("\\b")).stream())  //collapse from stream of stream of string to stream of string
+                    .map(s -> s.toLowerCase())
+                    .filter( w -> word.matcher(w).matches())
                     .collect(Collectors.groupingBy(w -> w, Collectors.counting()))
                     .entrySet().stream()
                     .sorted(Comparator.comparing(Map.Entry<String,Long>::getValue).reversed())
