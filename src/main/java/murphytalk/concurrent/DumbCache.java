@@ -17,13 +17,12 @@ import java.util.function.Function;
  */
 
 public class DumbCache <K,V> {
-    private static class Pair<V> {
+    private static class Wrapper<V> {
         V value;
-        boolean available;
     }
 
     private final Function<K,V>  provider;
-    private final Map<K,Pair<V>> cache;
+    private final Map<K,Wrapper<V>> cache;
 
     public DumbCache(Function<K, V> provider) {
         if(provider == null) throw new NullPointerException("Need a valid provider!");
@@ -32,20 +31,19 @@ public class DumbCache <K,V> {
     }
 
     public V get(K key){
-        Pair<V> pair = cache.get(key);
-        if(pair==null){
+        Wrapper<V> wrapper = cache.get(key);
+        if(wrapper ==null){
             //cache miss
-            pair = new Pair();
-            cache.put(key,pair);
-            synchronized (pair){
-                pair.value = provider.apply(key);
-                pair.available = pair.value !=null;
+            wrapper = new Wrapper();
+            cache.put(key, wrapper);
+            synchronized (wrapper){
+                wrapper.value = provider.apply(key);
             }
-            return pair.available?pair.value:null;
+            return  wrapper.value;
         }
         else{
-            synchronized (pair){
-                return pair.available?pair.value:null;
+            synchronized (wrapper){
+                return  wrapper.value;
             }
         }
     }

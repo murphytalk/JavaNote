@@ -21,10 +21,10 @@ public class TestDumbCache {
     public void setup() {
         cache = new DumbCache<>(
                 // this provider converts key to string if key is larger than 10 otherwise return null (to simulate unavailable data)
-                // and it takes DELAY ms to return if key is larger than 100 - see the tread testing below
+                // and it takes DELAY ms to return if key is larger than 100 or less than 10 - see the thread testing below
                 key -> {
                     try {
-                        if(key>100) Thread.sleep(DELAY);
+                        if(key<10 || key>100) Thread.sleep(DELAY);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -56,15 +56,19 @@ public class TestDumbCache {
     @Test
     public void testUnavailableData(){
         //the 1st run will take at least  DELAY ms
+        long delta ;
         long start = System.currentTimeMillis();
-        System.out.println(String.format("1st get took %d ms",System.currentTimeMillis() - start));
 
-        assertThat(cache.get(1),is(nullValue())); //no data
+        assertThat(cache.get(1),is(nullValue())); //see setup() : key < 10, provider won't return data,
+        delta = System.currentTimeMillis() - start;
+        System.out.println(String.format("1st get took %d ms",delta));
 
-        //the 2nd run should return immediately
+        assertTrue(delta>=DELAY); //1st run will get delayed by provider
+
+        //the 2nd run against the same key (provider has no data for it) should return immediately without calling provider
         start = System.currentTimeMillis();
         assertThat(cache.get(1),is(nullValue())); //no data
-        long delta = System.currentTimeMillis() - start;
+        delta = System.currentTimeMillis() - start;
         System.out.println(String.format("2nd get took %d ms",delta));
 
         assertTrue(delta<DELAY); //no data but return quickly
@@ -102,10 +106,10 @@ public class TestDumbCache {
 
     @Test
     public void testTwoTreadsDiffKey() throws InterruptedException {
-        final Integer key1 = 12345; //see set(), key> 100, so this provider should take at least DELAY ms to finish
+        final Integer key1 = 12345; //see setup(), key> 100, so this provider should take at least DELAY ms to finish
         final String  value1 = "12345";
 
-        final Integer key2 = 50;   //see set(), key < 100, so this provider should return immediately
+        final Integer key2 = 50;   //see setup(), key < 100, so this provider should return immediately
         final String  value2 = "50";
 
         Thread t1 = new Thread( () ->{
