@@ -4,7 +4,8 @@ import murphytalk.test.StopWatch;
 import org.junit.Test;
 import sun.misc.Contended;
 
-import java.awt.*;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * https://software.intel.com/en-us/articles/avoiding-and-identifying-false-sharing-among-threads
@@ -30,21 +31,21 @@ public class TestFalseSharing {
         public volatile long valueB;
     }
 
-private static class LhsPadding
-{
-    protected long p1, p2, p3, p4, p5, p6, p7;
-}
+    private static class LhsPadding
+    {
+        protected long p1, p2, p3, p4, p5, p6, p7;
+    }
 
-private static class Value extends LhsPadding
-{
-    protected volatile long valueA;
-    protected volatile long valueB;
-}
+    private static class Value extends LhsPadding
+    {
+        protected volatile long valueA;
+        protected volatile long valueB;
+    }
 
-private static class RhsPadding extends Value
-{
-    protected long p9, p10, p11, p12, p13, p14, p15;
-}
+    private static class RhsPadding extends Value
+    {
+        protected long p9, p10, p11, p12, p13, p14, p15;
+    }
 
     private static  class LikeDisruptorSequence extends RhsPadding{
         void incA(){valueA++;}
