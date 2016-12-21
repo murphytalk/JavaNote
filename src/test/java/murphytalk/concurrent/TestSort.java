@@ -13,7 +13,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 /**
- * Created by murphytalk on 12/10/2016.
+ * Compare the sorting (standard Tim sort and a home-made merge sort) performance in single thread and parallel mode.
+ *
+ * Run each test separately, otherwise tests run later will benefit from a warmed up JVM.
+ *
+ * Observations:
+ * Averagely the parallel sorting are faster, but its standard deviation is doubled compared with single thread versions.
+ * In other words : the performance of parallel sorting tends to be not as stable as single threaded sorting.
  */
 public class TestSort {
     private static final int size = 1_000_000;
@@ -34,12 +40,22 @@ public class TestSort {
     /* The vanilla array sort uses TimSort.
        For this 1 million random int test case, quite often this sort is the slowest
      */
-    //@Ignore
     @Test
     public void testArraySort(){
         StopWatch.measure("testArraySort", ()-> {
             toBeSorted = data.clone();
             Arrays.sort(toBeSorted);
+        },repeat);
+        assertThat(sortedData,is(toBeSorted));
+    }
+
+    /* ForkJoin + TimSort
+     */
+    @Test
+    public void testArrayParallelSort(){
+         StopWatch.measure("testArrayParallelSort", ()-> {
+            toBeSorted = data.clone();
+            Arrays.parallelSort(toBeSorted);
         },repeat);
         assertThat(sortedData,is(toBeSorted));
     }
@@ -57,7 +73,7 @@ public class TestSort {
     }
 
     /* This leverages fork/join framework to parallelize the sorting.
-       30% faster than testMergeSort1() on my 8-core (logical) i7 6700K
+       30% faster than testMergeSort() on my 8-core (logical) i7 6700K
     */
     @Test
     public void testMergeSortForkJoin(){
