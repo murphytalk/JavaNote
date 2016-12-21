@@ -3,6 +3,8 @@ package murphytalk.concurrent;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
@@ -22,12 +24,12 @@ public class DumbCache <K,V> {
     }
 
     private final Function<K,V>  provider;
-    private final Map<K,Wrapper<V>> cache;
+    private final ConcurrentHashMap<K,Wrapper<V>> cache;
 
     public DumbCache(Function<K, V> provider) {
         if(provider == null) throw new NullPointerException("Need a valid provider!");
         this.provider = provider;
-        this.cache = Maps.newConcurrentMap();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     public V get(K key){
@@ -35,14 +37,24 @@ public class DumbCache <K,V> {
         if(wrapper ==null){
             //cache miss
             wrapper = new Wrapper();
-            cache.put(key, wrapper);
-            synchronized (wrapper){
-                wrapper.value = provider.apply(key);
+            Wrapper<V> savedWrapper = cache.putIfAbsent(key, wrapper);
+            if(savedWrapper==null) savedWrapper=wrapper;
+            synchronized (savedWrapper){
+                if(savedWrapper!=wrapper){
+                    //if savedWrapper is not the one created by this thread then another thread has already set the data with the same key
+                    //in this case the data is ready as long as we get into the critical section (freed by the other thread that just loaded data)
+                    //we don't need to do anything, just exit critical section and return the data
+                }
+                else{
+                    //get data from provider and save it, if there is another thread querying the same key now,
+                    //it will get blocked until data is set in this thread
+                    savedWrapper.value = provider.apply(key);
+                }
             }
-            return  wrapper.value;
+            return savedWrapper.value;
         }
         else{
-            synchronized (wrapper){
+            synchronized (wrapper){ //the other thread might be loading data
                 return  wrapper.value;
             }
         }
