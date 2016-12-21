@@ -20,11 +20,6 @@ public class DumbCache <K,V> {
     private static class Pair<V> {
         V value;
         boolean available;
-        Pair(){}
-        Pair(V value, boolean available) {
-            this.value = value;
-            this.available = available;
-        }
     }
 
     private final Function<K,V>  provider;
