@@ -33,6 +33,14 @@ public class TestDumbCache {
         );
     }
 
+    //
+    //the first 2 tests do not use the cache object prepared in setup()
+    //
+    @Test(expected=NullPointerException.class)
+    public void testNullProvider(){
+        new DumbCache<String,String>(null);
+    }
+
     @Test
     public void testCacheMiss(){
         Function<String,String> provider = mock(Function.class);
@@ -94,7 +102,7 @@ public class TestDumbCache {
 
     @Test
     public void testTwoTreadsDiffKey() throws InterruptedException {
-        final Integer key1 = 12345;
+        final Integer key1 = 12345; //see set(), key> 100, so this provider should take at least DELAY ms to finish
         final String  value1 = "12345";
 
         final Integer key2 = 50;   //see set(), key < 100, so this provider should return immediately
@@ -114,7 +122,7 @@ public class TestDumbCache {
             long delta = System.currentTimeMillis()-start;
             System.out.println(String.format("thread 2 took %d ms",delta));
 
-            assertTrue(delta<DELAY); //thread 2 should not get blocked
+            assertTrue(delta<DELAY); //thread 2 should not get blocked, even thread1 takes DELAY ms to finish
             assertThat(s,is(value2));
         });
 
