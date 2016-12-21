@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
@@ -19,19 +20,14 @@ public class Files {
         return getPathFromClassPath(clz,filename).toFile();
     }
 
-    @FunctionalInterface
-    public interface HandleStringStream{
-        void handle(Stream<String> s);
-    }
-
-    public static void readTextFileInZip(File zipFile,String filename, HandleStringStream handler)  {
+    public static void readTextFileInZip(File zipFile,String filename, Consumer<Stream<String>> handler)  {
         try (final ZipFile zip = new ZipFile(zipFile)) {
             zip.stream()
                     .filter( ze -> !ze.isDirectory() )
                     .filter( ze -> ze.getName().equals(filename))
                     .findFirst().ifPresent( ze -> {
                 try (BufferedReader buffer = new BufferedReader(new InputStreamReader(zip.getInputStream(ze)))) {
-                    handler.handle(buffer.lines());
+                    handler.accept(buffer.lines());
                 } catch (IOException e) {
                 }
             });
