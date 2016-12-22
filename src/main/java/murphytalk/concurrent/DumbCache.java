@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
+ * Implement a cache : returns value for the given key, if there is a cache miss then call user defined provider to load data.
+ *
  * Condition and requirements are:
  * 1) The provider could take long time to return a value,
  *    so if for a particular key the data is not available, do not call the provider again for the further query to the same key

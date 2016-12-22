@@ -9,9 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class TestDumbCache {
     private DumbCache<Integer,String> cache;
@@ -46,11 +44,23 @@ public class TestDumbCache {
         Function<String,String> provider = mock(Function.class);
         DumbCache<String,String> emptyCache = new DumbCache<>(provider);
 
-        final String key = "XYZ";
-        emptyCache.get(key);
 
-        //when there is a cache miss, the provider will get called once with the key
+        final String key = "XYZ";
+        final String value = "data";
+        when(provider.apply(key)).thenReturn(value);
+
+        //first all to cache ,should get the value (lazy load)
+        assertThat(emptyCache.get(key),is(value));
+        //there is a cache miss, the provider should get called once with the key
         verify(provider,times(1)).apply(key);
+
+        //reset the invoker counter
+        reset(provider);
+
+        //2nd call to cache, this time no more miss
+        assertThat(emptyCache.get(key),is(value));
+        //since there is no cache miss, the provider should not get called with the key
+        verify(provider,times(0)).apply(key);
     }
 
     @Test
