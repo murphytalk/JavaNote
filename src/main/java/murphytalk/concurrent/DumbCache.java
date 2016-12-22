@@ -2,17 +2,17 @@ package murphytalk.concurrent;
 
 import com.google.common.collect.Maps;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
  * Condition and requirements are:
- * 1) The provider could take long time to return a value
+ * 1) The provider could take long time to return a value,
+ *    so if for a particular key the data is not available, do not call the provider again for the further query to the same key
  * 2) In multi-threaded situation
  *    if two treads try to get the value of the same key and the value is not in cache yet, the 2nd thread should block until data is available
- *    if two treads try to get the value of different keys and the values are not in cache, both of the threads should call provider to load data to cache
+ *    if two treads try to get the values of different keys and the values are not in cache,
+ *     both of the threads should call provider to load data to cache without blocking each other
  *
  * @param <K>  key data type
  * @param <V>  value data type
@@ -24,12 +24,12 @@ public class DumbCache <K,V> {
     }
 
     private final Function<K,V>  provider;
-    private final ConcurrentHashMap<K,Wrapper<V>> cache;
+    private final ConcurrentMap<K,Wrapper<V>> cache;
 
     public DumbCache(Function<K, V> provider) {
         if(provider == null) throw new NullPointerException("Need a valid provider!");
         this.provider = provider;
-        this.cache = new ConcurrentHashMap<>();
+        this.cache = Maps.newConcurrentMap();
     }
 
     public V get(K key){
