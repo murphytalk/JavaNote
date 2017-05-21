@@ -11,7 +11,6 @@ class TestShuntingYard(){
     private var rpn = RPN()
 
     @Test fun testRPN() {
-        val rpn = RPN()
         assert.that(rpn.evaluate("512+4*+3-"), equalTo(14))
     }
 
