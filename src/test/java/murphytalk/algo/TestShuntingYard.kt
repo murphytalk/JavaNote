@@ -7,8 +7,8 @@ import org.junit.Test
 /**
  * Created by murphytalk on 5/22/2017.
  */
-class TestShuntingYard(){
-    private var rpn = RPN()
+class TestShuntingYard{
+    private val rpn = RPN()
 
     @Test fun testRPN() {
         assert.that(rpn.evaluate("512+4*+3-"), equalTo(14))
