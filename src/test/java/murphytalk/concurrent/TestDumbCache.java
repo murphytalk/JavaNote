@@ -1,23 +1,33 @@
 package murphytalk.concurrent;
 
-import org.junit.Before;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 
+@RunWith(Parameterized.class)
 public class TestDumbCache {
-    private DumbCache<Integer,String> cache;
-    private final long DELAY = 3000; //ms
+    private static final Logger logger = LogManager.getLogger();
+    private final DumbCache<Integer,String> cache;
+    private static final long DELAY = 3000; //ms
 
-    @Before
-    public void setup() {
-        cache = new DumbCache<>(
+    @Parameterized.Parameters
+    public static Collection<Class> instantiate(){
+        return Arrays.asList(new Class[] {DumbCacheCondition.class, DumbCacheWrapper.class});
+    }
+
+    public TestDumbCache(Class testClass) throws IllegalAccessException, InstantiationException {
+        cache = (DumbCache<Integer,String>)testClass.newInstance();
+        cache.init (
                 // this provider converts key to string if key is larger than 10 otherwise return null (to simulate unavailable data)
                 // and it takes DELAY ms to return if key is larger than 100 or less than 10 - see the thread testing below
                 key -> {
@@ -31,37 +41,12 @@ public class TestDumbCache {
         );
     }
 
-    //
-    //the first 2 tests do not use the cache object prepared in setup()
-    //
+    /*
     @Test(expected=NullPointerException.class)
     public void testNullProvider(){
-        new DumbCache<String,String>(null);
+        new DumbCacheWrapper<String,String>(null);
     }
-
-    @Test
-    public void testCacheMiss(){
-        Function<String,String> provider = mock(Function.class);
-        DumbCache<String,String> emptyCache = new DumbCache<>(provider);
-
-
-        final String key = "XYZ";
-        final String value = "data";
-        when(provider.apply(key)).thenReturn(value);
-
-        //first all to cache ,should get the value (lazy load)
-        assertThat(emptyCache.get(key),is(value));
-        //there is a cache miss, the provider should get called once with the key
-        verify(provider,times(1)).apply(key);
-
-        //reset the invoker counter
-        reset(provider);
-
-        //2nd call to cache, this time no more miss
-        assertThat(emptyCache.get(key),is(value));
-        //since there is no cache miss, the provider should not get called with the key
-        verify(provider,times(0)).apply(key);
-    }
+    */
 
     @Test
     public void testUnavailableData(){
@@ -71,7 +56,7 @@ public class TestDumbCache {
 
         assertThat(cache.get(1),is(nullValue())); //see setup() : key < 10, provider won't return data,
         delta = System.currentTimeMillis() - start;
-        System.out.println(String.format("1st get took %d ms",delta));
+        logger.info("1st get took {} ms",delta);
 
         assertTrue(delta>=DELAY); //1st run will get delayed by provider
 
@@ -79,7 +64,7 @@ public class TestDumbCache {
         start = System.currentTimeMillis();
         assertThat(cache.get(1),is(nullValue())); //no data
         delta = System.currentTimeMillis() - start;
-        System.out.println(String.format("2nd get took %d ms",delta));
+        logger.info("2nd get took {} ms",delta);
 
         assertTrue(delta<DELAY); //no data but return quickly
     }
@@ -92,7 +77,7 @@ public class TestDumbCache {
         Thread t1 = new Thread( () ->{
             long start = System.currentTimeMillis();
             String s = cache.get(key);
-            System.out.println(String.format("thread 1 took %d ms",System.currentTimeMillis()-start));
+            logger.info("thread 1 took {} ms",System.currentTimeMillis()-start);
 
             assertThat(s,is(value));
         });
@@ -101,7 +86,7 @@ public class TestDumbCache {
             long start = System.currentTimeMillis();
             String s = cache.get(key);
             long delta = System.currentTimeMillis()-start;
-            System.out.println(String.format("thread 2 took %d ms",delta));
+            logger.info("thread 2 took {} ms",delta);
 
             //thread 2 will get blocked for at least DELAY sec
             assertTrue(delta>=DELAY);
@@ -125,8 +110,10 @@ public class TestDumbCache {
         Thread t1 = new Thread( () ->{
             long start = System.currentTimeMillis();
             String s = cache.get(key1);
-            System.out.println(String.format("thread 1 took %d ms",System.currentTimeMillis()-start));
+            long delta = System.currentTimeMillis()-start;
+            logger.info("thread 1 took {} ms",System.currentTimeMillis()-start);
 
+            assertTrue(delta>=DELAY); //thread 1 was blocked
             assertThat(s,is(value1));
         });
 
@@ -134,7 +121,7 @@ public class TestDumbCache {
             long start = System.currentTimeMillis();
             String s = cache.get(key2);
             long delta = System.currentTimeMillis()-start;
-            System.out.println(String.format("thread 2 took %d ms",delta));
+            logger.info("thread 2 took {} ms",delta);
 
             assertTrue(delta<DELAY); //thread 2 should not get blocked, even thread1 takes DELAY ms to finish
             assertThat(s,is(value2));
