@@ -8,13 +8,11 @@ import org.junit.Test
  * Created by murphytalk on 5/22/2017.
  */
 class TestShuntingYard{
-    private val rpn = RPN()
-
     @Test fun testRPN() {
-        assert.that(rpn.evaluate("512+4*+3-"), equalTo(14))
+        assert.that(RPN("512+4*+3-"), equalTo(14))
     }
 
     @Test(expected=RuntimeException::class) fun testRPN_InvalidOperator(){
-        rpn.evaluate("512D34")
+        RPN("512D34")
     }
 }
