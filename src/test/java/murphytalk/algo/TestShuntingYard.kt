@@ -8,11 +8,15 @@ import org.junit.Test
  * Created by murphytalk on 5/22/2017.
  */
 class TestShuntingYard{
-    @Test fun testRPN() {
-        assertThat(RPN("512+4*+3-"), `is`(14))
+    @Test fun testRPN1() {
+        assertThat(RPN("5 1 2+4*+3-"), `is`(14))
     }
 
-    @Test(expected=RuntimeException::class) fun testRPN_InvalidOperator(){
+    @Test fun testRPN2() {
+        assertThat(RPN("25 50+"), `is`(75))
+    }
+
+     @Test(expected=RuntimeException::class) fun testRPN_InvalidOperator(){
         RPN("512D34")
     }
 }
