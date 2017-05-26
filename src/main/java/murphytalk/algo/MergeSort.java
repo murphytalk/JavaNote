@@ -2,9 +2,9 @@ package murphytalk.algo;
 
 import java.util.Arrays;
 
-public class MergeSort<T extends Comparable> implements Sort<T> {
+public class MergeSort<T extends Comparable<? super T>> implements Sort<T> {
     public final static int SMALL_ENOUGH = 16;
-    final Comparable[] workBuffer;
+    final Comparable<? super T>[] workBuffer;
 
     /**
      * Initialize a MergeSort
@@ -39,7 +39,7 @@ public class MergeSort<T extends Comparable> implements Sort<T> {
      * @param mid index of the last element of the left half
      * @param work a work buffer
      */
-    public static <T extends Comparable> void merge(T[] objects,int begin,int end,int mid,T[] work){
+    public static <T extends Comparable<? super T>> void merge(T[] objects,int begin,int end,int mid,T[] work){
         int left = begin;
         int leftEnd = mid;
         int right = mid;

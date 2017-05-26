@@ -3,13 +3,13 @@ package murphytalk.algo.kotlin
 import murphytalk.algo.Sort
 import java.util.*
 
-class MergeSort<T : Comparable<Any>>
+class MergeSort<T : Comparable<T>>
 /**
  * Initialize a MergeSort
  * @param size size of the elements to sort
  */
 (size: Int) : Sort<T> {
-    internal val workBuffer: Array<Comparable<Any>?> = arrayOfNulls(size)
+    internal val workBuffer: Array<Comparable<T>?> = arrayOfNulls(size)
 
     override fun sort(objects: Array<T>, begin: Int, end: Int) {
         val size = end - begin
@@ -40,7 +40,7 @@ class MergeSort<T : Comparable<Any>>
          * *
          * @param work a work buffer
          */
-        fun <T : Comparable<Any>> merge(objects: Array<T>, begin: Int, end: Int, mid: Int, work: Array<T>) {
+        fun <T : Comparable<T>> merge(objects: Array<T>, begin: Int, end: Int, mid: Int, work: Array<T>) {
             var left = begin
             val leftEnd = mid
             var right = mid

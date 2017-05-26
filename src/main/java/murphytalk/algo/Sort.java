@@ -1,9 +1,9 @@
 package murphytalk.algo;
 
 
-public interface Sort<T extends Comparable> {
+public interface Sort<T extends Comparable<? super T>> {
     @FunctionalInterface
-    interface Merge<T extends Comparable>{
+    interface Merge<T extends Comparable<? super T>>{
         void merge(T[] objects,int begin,int end,int mid,T[] work);
     }
 

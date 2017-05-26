@@ -10,6 +10,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 
 /**
  * Compare the sorting (standard Tim sort and a home-made merge sort) performance in single thread and parallel mode.
@@ -34,6 +35,7 @@ public class TestSort {
         data = Arrays.copyOf( random, random.length, Integer[].class);
         sortedData = data.clone();
         Arrays.sort(sortedData);
+        assertThat(sortedData,not(data)); //make sure sortedData and data are different
     }
 
     /* The vanilla array sort uses TimSort.
