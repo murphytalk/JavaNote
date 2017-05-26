@@ -30,6 +30,7 @@ fun RPN(s: String): Int {
                             '/' -> v1 / v2
                             '-' -> v1 - v2
                             '+' -> v1 + v2
+                            '^' -> Math.pow(v1.toDouble(), v2.toDouble()).toInt()
                             else -> throw RuntimeException("Invalid operator $c")
                         }
                 )

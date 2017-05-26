@@ -16,7 +16,11 @@ class TestShuntingYard{
         assertThat(RPN("25 50+"), `is`(75))
     }
 
-     @Test(expected=RuntimeException::class) fun testRPN_InvalidOperator(){
+    @Test fun testRPN3(){
+        assertThat(RPN("4 5^"), `is`(1024))
+    }
+
+    @Test(expected=RuntimeException::class) fun testRPN_InvalidOperator(){
         RPN("512D34")
     }
 }
