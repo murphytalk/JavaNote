@@ -1,7 +1,13 @@
 package murphytalk.algo;
 
-public interface Sort {
-    default void sort(Comparable[] objects) {
+
+public interface Sort<T extends Comparable> {
+    @FunctionalInterface
+    interface Merge<T extends Comparable>{
+        void merge(T[] objects,int begin,int end,int mid,T[] work);
+    }
+
+    default void sort(T[] objects) {
         sort(objects,0,objects.length);
     }
 
@@ -11,5 +17,5 @@ public interface Sort {
      * @param begin index of the first element in array - parallel: STL collection's begin()
      * @param end   index <b>after</b> the last element in array - parallel: STL collection's end()
      */
-    void sort(Comparable[] objects,int begin,int end);
+    void sort(T[] objects,int begin,int end);
 }

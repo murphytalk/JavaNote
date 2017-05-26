@@ -1,17 +1,17 @@
 package murphytalk.algo.kotlin
 
 import murphytalk.algo.Sort
-import java.util.Arrays
+import java.util.*
 
-class MergeSort
+class MergeSort<T : Comparable<Any>>
 /**
  * Initialize a MergeSort
  * @param size size of the elements to sort
  */
-(size: Int) : Sort {
-    internal val workBuffer: Array<Comparable<*>?> = arrayOfNulls(size)
+(size: Int) : Sort<T> {
+    internal val workBuffer: Array<Comparable<Any>?> = arrayOfNulls(size)
 
-    override fun sort(objects: Array<Comparable<*>>, begin: Int, end: Int) {
+    override fun sort(objects: Array<T>, begin: Int, end: Int) {
         val size = end - begin
         if (size < SMALL_ENOUGH) {
             Arrays.sort(objects, begin, end)
@@ -19,7 +19,7 @@ class MergeSort
             val mid = begin + (end - begin).ushr(1)
             sort(objects, begin, mid)
             sort(objects, mid, end)
-            merge(objects, begin, end, mid, workBuffer)
+            merge(objects, begin, end, mid, workBuffer as Array<T>)
         }
     }
 
@@ -31,12 +31,16 @@ class MergeSort
          * Prerequisite : both of the halves themselves are already sorted.
 
          * @param objects array whose two halves between begin and end and separated by mid are already sorted
+         * *
          * @param begin index of the first element of the left half
+         * *
          * @param end index after the last element of the right half
+         * *
          * @param mid index of the last element of the left half
+         * *
          * @param work a work buffer
          */
-        fun merge(objects: Array<Comparable<*>>, begin: Int, end: Int, mid: Int, work: Array<Comparable<*>?>) {
+        fun <T : Comparable<Any>> merge(objects: Array<T>, begin: Int, end: Int, mid: Int, work: Array<T>) {
             var left = begin
             val leftEnd = mid
             var right = mid

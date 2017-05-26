@@ -2,7 +2,7 @@ package murphytalk.algo;
 
 import java.util.Arrays;
 
-public class MergeSort implements Sort{
+public class MergeSort<T extends Comparable> implements Sort<T> {
     public final static int SMALL_ENOUGH = 16;
     final Comparable[] workBuffer;
 
@@ -15,7 +15,7 @@ public class MergeSort implements Sort{
     }
 
     @Override
-    public void sort(Comparable[] objects, int begin, int end) {
+    public void sort(T[] objects, int begin, int end) {
         final int size = end-begin;
         if(size<SMALL_ENOUGH){
             Arrays.sort(objects,begin,end);
@@ -24,9 +24,10 @@ public class MergeSort implements Sort{
             final int mid = begin + ((end - begin) >>>1);
             sort(objects,begin,mid);
             sort(objects,mid ,end);
-            merge(objects,begin,end,mid,workBuffer);
+            merge(objects,begin,end,mid,(T[])workBuffer);
         }
     }
+
 
     /**
      * Merge the two halves of the array : [begin,mid) and [mid,length) .
@@ -38,7 +39,7 @@ public class MergeSort implements Sort{
      * @param mid index of the last element of the left half
      * @param work a work buffer
      */
-    public static void merge(Comparable[] objects,int begin,int end,int mid,Comparable[] work){
+    public static <T extends Comparable> void merge(T[] objects,int begin,int end,int mid,T[] work){
         int left = begin;
         int leftEnd = mid;
         int right = mid;

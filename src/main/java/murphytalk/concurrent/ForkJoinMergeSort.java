@@ -1,6 +1,7 @@
 package murphytalk.concurrent;
 
 import murphytalk.algo.MergeSort;
+import murphytalk.algo.Sort;
 
 import java.util.Arrays;
 import java.util.concurrent.RecursiveAction;
@@ -12,12 +13,14 @@ public class ForkJoinMergeSort extends RecursiveAction {
     protected final Comparable[] data;
     protected final Comparable[] work;
     protected final int begin, end;
+    private final Sort.Merge mergeFunc;
 
-    public ForkJoinMergeSort(Comparable[] data, int begin, int end) {
+    public ForkJoinMergeSort(Sort.Merge mergeFunc, Comparable[] data, int begin, int end) {
         this.data = data;
         this.begin = begin;
         this.end = end;
         this.work = new Comparable[end-begin];
+        this.mergeFunc = mergeFunc;
     }
 
     public int size(){
@@ -25,7 +28,7 @@ public class ForkJoinMergeSort extends RecursiveAction {
     }
 
     protected void merge(int mid){
-        MergeSort.merge(data,begin,end,mid,work);
+        mergeFunc.merge(data,begin,end,mid,work);
     }
 
     protected void compute() {
@@ -35,8 +38,8 @@ public class ForkJoinMergeSort extends RecursiveAction {
         }
         else{
             final int mid = begin + (size >>> 1 );
-            ForkJoinMergeSort left  = new ForkJoinMergeSort(data, begin, mid);
-            ForkJoinMergeSort right = new ForkJoinMergeSort(data, mid,end);
+            ForkJoinMergeSort left  = new ForkJoinMergeSort(mergeFunc, data, begin, mid);
+            ForkJoinMergeSort right = new ForkJoinMergeSort(mergeFunc, data, mid,end);
             invokeAll(left,right);
             merge(mid);
         }

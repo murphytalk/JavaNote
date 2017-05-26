@@ -71,6 +71,18 @@ public class TestSort {
         assertThat(sortedData,is(toBeSorted));
     }
 
+    /* Merge sort in single thread, Kotlin version
+     */
+    @Test
+    public void testMergeSortKotlin(){
+        StopWatch.measure("testMergeSortKotlin", ()-> {
+            final Sort mergeSort = new murphytalk.algo.kotlin.MergeSort(size);
+            toBeSorted = data.clone();
+            mergeSort.sort(toBeSorted);
+        },repeat);
+        assertThat(sortedData,is(toBeSorted));
+    }
+
     /* This leverages fork/join framework to parallelize the sorting.
        30% faster than testMergeSort() on my 8-core (logical) i7 6700K
     */
@@ -78,7 +90,17 @@ public class TestSort {
     public void testMergeSortForkJoin(){
         StopWatch.measure("testMergeSortForkJoin", ()-> {
             toBeSorted = data.clone();
-            final ForkJoinMergeSort sorter = new ForkJoinMergeSort(toBeSorted,0,size);
+            final ForkJoinMergeSort sorter = new ForkJoinMergeSort(MergeSort::merge, toBeSorted,0,size);
+            ForkJoinPool.commonPool().invoke(sorter);
+        },repeat);
+        assertThat(sortedData,is(toBeSorted));
+    }
+
+    @Test
+    public void testMergeSortForkJoinKotlin(){
+        StopWatch.measure("testMergeSortForkJoinKotlin", ()-> {
+            toBeSorted = data.clone();
+            final ForkJoinMergeSort sorter = new ForkJoinMergeSort(murphytalk.algo.kotlin.MergeSort.Companion::merge, toBeSorted,0,size);
             ForkJoinPool.commonPool().invoke(sorter);
         },repeat);
         assertThat(sortedData,is(toBeSorted));

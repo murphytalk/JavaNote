@@ -1,7 +1,7 @@
 package murphytalk.algo
 
-import com.natpryce.hamkrest.assertion.assert // https://github.com/npryce/hamkrest
-import com.natpryce.hamkrest.equalTo
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.core.Is.`is`
 import org.junit.Test
 
 /**
@@ -9,7 +9,7 @@ import org.junit.Test
  */
 class TestShuntingYard{
     @Test fun testRPN() {
-        assert.that(RPN("512+4*+3-"), equalTo(14))
+        assertThat(RPN("512+4*+3-"), `is`(14))
     }
 
     @Test(expected=RuntimeException::class) fun testRPN_InvalidOperator(){
