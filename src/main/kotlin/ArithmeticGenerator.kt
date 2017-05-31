@@ -38,10 +38,25 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
         val sb = StringBuilder()
         var numOfOperator = 0
 
-        sb.append(generateNumber())
-        while(numOfOperator<operatorNum){
-            sb.append(generateOperator()).append(generateNumber())
-            ++numOfOperator
+        var negative = false
+        var callback: ((Int) -> Unit)?  = null
+        if(noNageative) callback = {value:Int -> if(!negative && value<0) negative = true}
+
+        while(true) {
+            sb.append(generateNumber())
+            while (numOfOperator < operatorNum) {
+                sb.append(generateOperator()).append(generateNumber())
+                ++numOfOperator
+            }
+            if (callback != null) {
+                if (evalArithmetic(sb.toString(), callback) < 0 || negative) {
+                    sb.delete(0,sb.length)
+                    numOfOperator = 0
+                    negative = false
+                }
+                else break
+            }
+            else break
         }
 
         return sb.toString()
