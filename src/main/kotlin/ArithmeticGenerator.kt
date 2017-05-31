@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Created by murphytalk on 5/31/2017.
  */
-class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageative: Boolean,
+class ArithmeticGenerator private constructor(val operatorNum:Int, val noNegative: Boolean,
                                               val allowMultiplication: Boolean, val allowDivision: Boolean,
                                               val addSubNumberDigitsPossibilities: Array<Pair<Int,Int>>,
                                               val multiDivNumberDigitsPossibilities: Array<Pair<Int,Int>>){
@@ -48,7 +48,7 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
 
         var negative = false
         var callback: ((Int) -> Unit)?  = null
-        if(noNageative) callback = {value:Int -> if(!negative && value<0) negative = true}
+        if(noNegative) callback = { value:Int -> if(!negative && value<0) negative = true}
 
         while(true) {
             sb.append(generateNumber(true))
