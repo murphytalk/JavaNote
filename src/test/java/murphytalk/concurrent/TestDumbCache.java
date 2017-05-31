@@ -22,7 +22,7 @@ public class TestDumbCache {
 
     @Parameterized.Parameters
     public static Collection<Class> instantiate(){
-        return Arrays.asList(new Class[] {DumbCacheCondition.class, DumbCacheWrapper.class});
+        return Arrays.asList(new Class[] {/*DumbCacheCondition.class,*/ DumbCacheWrapper.class});
     }
 
     public TestDumbCache(Class testClass) throws IllegalAccessException, InstantiationException {
