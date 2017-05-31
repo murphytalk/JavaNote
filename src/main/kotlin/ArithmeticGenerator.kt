@@ -18,14 +18,17 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
     }
 
     private fun generateNumber(): Int {
-        val p = random.nextInt(101) // an integer within [0, 100]
+        var p = random.nextInt(101) // an integer within [0, 100]
         var v = 0
         for ((possibility, digits) in numberDigitsPossibilities){
             if(p<=possibility){
                 do {
                     v = Math.floor(random.nextFloat() * Math.pow(10.0, digits.toDouble())).toInt()
-                } while(v < 100 ) //at least 2 digits
+                } while(v ==0 ) //at least 2 digits
                 break
+            }
+            else{
+                p = 100 - p
             }
         }
         return v
