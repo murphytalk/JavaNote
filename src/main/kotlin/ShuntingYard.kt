@@ -1,4 +1,4 @@
-package murphytalk.algo
+package murphytalk.arithmetic
 import java.util.*
 
 /**

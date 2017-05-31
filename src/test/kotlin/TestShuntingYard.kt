@@ -1,5 +1,4 @@
-package murphytalk.algo
-
+package murphytalk.arithmetic
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.Test
