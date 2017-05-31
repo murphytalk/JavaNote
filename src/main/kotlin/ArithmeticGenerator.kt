@@ -7,7 +7,8 @@ import java.util.*
  */
 class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageative: Boolean,
                                               val allowMultiplication: Boolean, val allowDivision: Boolean,
-                                              val numberDigitsPossibilities: Array<Pair<Int,Int>>){
+                                              val addSubNumberDigitsPossibilities: Array<Pair<Int,Int>>,
+                                              val multiDivNumberDigitsPossibilities: Array<Pair<Int,Int>>){
 
     private val random = Random()
 
@@ -17,14 +18,15 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
         return possibleOperators[random.nextInt(possibleOperators.size)].toString()
     }
 
-    private fun generateNumber(): Int {
+    private fun generateNumber(operatorIsAddSub:Boolean): Int {
         var p = random.nextInt(101) // an integer within [0, 100]
         var v = 0
-        for ((possibility, digits) in numberDigitsPossibilities){
+        val possibilities = if(operatorIsAddSub) addSubNumberDigitsPossibilities else multiDivNumberDigitsPossibilities
+        for ((possibility, digits) in possibilities){
             if(p<=possibility){
                 do {
                     v = Math.floor(random.nextFloat() * Math.pow(10.0, digits.toDouble())).toInt()
-                } while(v ==0 ) //at least 2 digits
+                } while(v == 0)
                 break
             }
             else{
@@ -35,6 +37,12 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
     }
 
     fun generate(): String{
+        fun isAddSub(operator:String):Boolean{
+            return when(operator[0]) {
+                '+','-' -> true
+                else -> false
+            }
+        }
         val sb = StringBuilder()
         var numOfOperator = 0
 
@@ -43,20 +51,22 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
         if(noNageative) callback = {value:Int -> if(!negative && value<0) negative = true}
 
         while(true) {
-            sb.append(generateNumber())
+            sb.append(generateNumber(true))
             while (numOfOperator < operatorNum) {
-                sb.append(generateOperator()).append(generateNumber())
+                val op = generateOperator()
+                sb.append(op).append(generateNumber(isAddSub(op)))
                 ++numOfOperator
             }
             if (callback != null) {
                 if (evalArithmetic(sb.toString(), callback) < 0 || negative) {
+                    //negative value detected, but no negative is demanded, generate again
                     sb.delete(0,sb.length)
                     numOfOperator = 0
                     negative = false
+                    continue
                 }
-                else break
             }
-            else break
+            break
         }
 
         return sb.toString()
@@ -67,9 +77,11 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
         private var noNageative: Boolean = true
         private var allowMultiplication: Boolean = true
         private var allowDivision: Boolean = false
-        //default : 80% chance to generate a 3 digits number; 20% chance to generate a 4 digits number
+        //default num digits for + -: 80% chance to generate a 3 digits number; 20% chance to generate a 4 digits number
         //needs to be sorted by chance in descending order
-        private var numberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,3), Pair(20,4))
+        private var addSubNumDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,3), Pair(20,4))
+        //default num digits for * /: 80% chance to generate a 1 digit number; 20% chance to generate a 2 digits number
+        private var multiDivNumDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,1), Pair(20,2))
 
         fun setOperatorNum(n:Int?): Builder{
             if(n!=null) operatorNum = n
@@ -93,13 +105,20 @@ class ArithmeticGenerator private constructor(val operatorNum:Int, val noNageati
             return this
         }
 
-        fun setNumberDigitsPossibilities(p: Array<Pair<Int,Int>>?):Builder{
-            if(p!=null) numberDigitsPossibilities = p
+        fun setAddSubNumberDigitsPossibilities(p: Array<Pair<Int,Int>>?):Builder{
+            if(p!=null) addSubNumDigitsPossibilities = p
+            return this
+        }
+
+        fun setMultiDivNumberDigitsPossibilities(p: Array<Pair<Int,Int>>?):Builder{
+            if(p!=null) multiDivNumDigitsPossibilities = p
             return this
         }
 
         fun build(): ArithmeticGenerator{
-            return ArithmeticGenerator(operatorNum, noNageative, allowMultiplication, allowDivision, numberDigitsPossibilities)
+            return ArithmeticGenerator(
+                    operatorNum, noNageative, allowMultiplication, allowDivision,
+                    addSubNumDigitsPossibilities,multiDivNumDigitsPossibilities)
         }
     }
 }

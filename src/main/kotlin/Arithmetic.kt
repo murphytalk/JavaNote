@@ -16,9 +16,7 @@ fun main(args:Array<String>){
     println(ansi().eraseScreen().fg(GREEN).a("Hi buddy, let's do some math!"))
     println()
 
-    val b = ArithmeticGenerator.Builder()
-    val generator = b.build()
-
+    val generator = ArithmeticGenerator.Builder().build()
     val arithmetic = Arithmetic(generator, 10)
 
     arithmetic.questions.map { (question, answer) ->  println(ansi().fg(YELLOW).a(question).fg(WHITE).a(" = ").fg(BLUE).a(answer)) }
