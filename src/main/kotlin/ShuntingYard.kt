@@ -5,7 +5,8 @@ import java.util.*
  * Created by murphytalk on 5/22/2017.
  */
 //Reverse Polish Notation
-fun RPN(s: String): Int {
+//callback gets called for each step of calculation result
+fun RPN(s: String, callback: ((Int) -> Unit)? = null): Int {
     val stack = Stack<Int>()
     val num = StringBuilder()
     for (c in s) {
@@ -31,6 +32,7 @@ fun RPN(s: String): Int {
                             else -> throw RuntimeException("Invalid operator $c")
                         }
                 )
+                callback?.invoke(stack.peek())
             }
         }
     }
@@ -117,6 +119,6 @@ fun shuntingYard(s: String): String {
     return output.toString()
 }
 
-fun evalArithmetic(s: String): Int {
-    return RPN(shuntingYard(s))
+fun evalArithmetic(s: String, callback: ((Int) -> Unit)? = null): Int {
+    return RPN(shuntingYard(s), callback)
 }

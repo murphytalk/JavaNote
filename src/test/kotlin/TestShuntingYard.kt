@@ -12,7 +12,7 @@ class TestShuntingYard {
     }
 
     @Test fun testRPN2() {
-        assertThat(RPN("25 50+"), `is`(75))
+        assertThat(RPN("25 20-50-"), `is`(-45))
     }
 
     @Test fun testRPN3() {
@@ -21,6 +21,18 @@ class TestShuntingYard {
 
     @Test(expected = RuntimeException::class) fun testRPN_InvalidOperator() {
         RPN("512D34")
+    }
+
+    @Test fun testRPN_callback1() {
+        var negative = false
+        RPN("5 1 2+4*+3-", {value -> if(!negative && value<0) negative = true })
+        assertThat(negative,`is`(false))
+    }
+
+     @Test fun testRPN_callback2() {
+        var negative = false
+        RPN("25 20-50-", {value -> if(!negative && value<0) negative = true })
+        assertThat(negative,`is`(true))
     }
 
     @Test fun shuntingYard() {
