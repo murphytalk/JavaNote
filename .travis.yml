@@ -1,6 +1,10 @@
 language: java
-java:
-    - "1.8"
+
+sudo: false
+
+jdk:
+    - oraclejdk8
+
 branches:
     only:
     - master
