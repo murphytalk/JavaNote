@@ -11,10 +11,9 @@ class Arithmetic(generator:ArithmeticGenerator, private val num:Int){
     private val questions = Array(num, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
 
     fun run() {
-        var correctNum = 0
         var highlightWrong = false
-        while(correctNum < num) {
-            correctNum = list(highlightWrong )
+        while(true) {
+            if(list(highlightWrong) == num) break
             val cmd = waitCommand()
             if (cmd[0] in '0'..'9') {
                 val idx = cmd[0]-'0'
