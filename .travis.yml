@@ -9,6 +9,6 @@ branches:
     only:
     - master
 
-script:
-    - ./gradlew check --debug
+#script:
+#    - ./gradlew check --debug
 
