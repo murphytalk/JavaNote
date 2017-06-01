@@ -1,5 +1,7 @@
 # README
 
+[![Build Status](https://travis-ci.org/murphytalk/JavaNote.svg?branch=master)](https://travis-ci.org/murphytalk/JavaNote)
+
 This is my little playground of Java and the other JVM languanges (e.g. Kotlin). 
 
 Run this to build a fat jar:

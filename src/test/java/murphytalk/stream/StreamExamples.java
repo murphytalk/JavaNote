@@ -3,6 +3,7 @@ package murphytalk.stream;
 import com.google.common.collect.Lists;
 import murphytalk.test.StopWatch;
 import murphytalk.utils.Files;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -83,7 +84,7 @@ public class StreamExamples {
                     .forEach( w -> onWord.accept(w));
     }
 
-    @Test
+    @Test @Ignore
     public void top20FrequentWordsInBible() throws URISyntaxException {
         final File zip = Files.getFileFromClassPath(this.getClass(),"/test-data.zip");
         final List<String> a1 = Lists.newArrayList();
