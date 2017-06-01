@@ -1,6 +1,7 @@
 package murphytalk.concurrent;
 
 import murphytalk.test.StopWatch;
+import org.junit.Ignore;
 import org.junit.Test;
 import sun.misc.Contended;
 
@@ -74,7 +75,7 @@ public class TestFalseSharing {
         }
     }
 
-    @Test
+    @Test @Ignore
     public void runWithoutPadding() throws Exception{
         final NoCacheLinePadding unpadded = new NoCacheLinePadding();
         StopWatch.measureSimple("runWithoutPadding",
@@ -83,7 +84,7 @@ public class TestFalseSharing {
         , REPEAT);
     }
 
-    @Test
+    @Test @Ignore
     public void runWithPadding() throws Exception{
         final HasCacheLinePadding padded = new HasCacheLinePadding();
         StopWatch.measureSimple("runWithPadding",
@@ -92,7 +93,7 @@ public class TestFalseSharing {
         ,REPEAT);
     }
 
-    @Test
+    @Test @Ignore
     public void runWithoutVolatile() throws Exception{
         final NoVolatile v = new NoVolatile();
         StopWatch.measureSimple("runWithoutVolatile",
@@ -101,7 +102,7 @@ public class TestFalseSharing {
         , REPEAT);
     }
 
-    @Test
+    @Test @Ignore
     public void runWithLikeDisruptor() throws Exception{
         final LikeDisruptorSequence l = new LikeDisruptorSequence();
         StopWatch.measureSimple("runLikeDisruptor",
