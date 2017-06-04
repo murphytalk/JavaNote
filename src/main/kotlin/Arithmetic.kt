@@ -17,10 +17,18 @@ class Arithmetic(generator:ArithmeticGenerator, private val num:Int){
             val cmd = waitCommand()
             if (cmd[0] in '0'..'9') {
                 val idx = cmd[0]-'0'
-                println(ansi().eraseLine().fg(WHITE).a("Input answer for question #$idx"))
-                val answer = waitCommand().toInt()
-                questions[idx].answered = true
-                questions[idx].userAnswer = answer
+                var wait_for_answer = false
+                do{
+                    println(ansi().eraseLine().fg(WHITE).a("Input answer for question #$idx"))
+                    try {
+                        val answer = waitCommand().toInt()
+                        questions[idx].answered = true
+                        questions[idx].userAnswer = answer
+                        wait_for_answer = false
+                    }catch (e:Exception){
+                        wait_for_answer = true
+                    }
+                }while(wait_for_answer)
             } else {
                 //check answer
                 highlightWrong  = true
