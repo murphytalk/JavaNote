@@ -51,11 +51,20 @@ class TestShuntingYard {
         assertThat(evalArithmetic("4^5"),`is`(1024))
     }
 
-    @Test fun eval4(){
+
+    @Test fun evalExtra1(){
         assertThat(evalArithmetic("1+4*5"),`is`(21))
     }
 
-    @Test fun eval5(){
+    @Test fun evalExtra2(){
         assertThat(evalArithmetic("307+743*279-958"), `is`(206646))
+    }
+
+    @Test fun evalExtra3(){
+        assertThat(evalArithmetic("5355-789*2-181"), `is`(3596))
+    }
+
+    @Test fun evalExtra4(){
+        assertThat(evalArithmetic("10-2*3-4*5"), `is`(-16))
     }
 }

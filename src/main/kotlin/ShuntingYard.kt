@@ -75,7 +75,7 @@ fun shuntingYard(s: String): String {
         } else {
             when (c) {
                 '*', '/', '+', '-', '^' -> {
-                    if (stack.size >= 1) {
+                    while (stack.size >= 1) {
                         val o2 = stack.peek()[0]
                         val order = operatorOrder(c /*o1*/, o2)
                         val ass = associativity(o2)
@@ -83,7 +83,7 @@ fun shuntingYard(s: String): String {
                             ((ass == 1 /*right-associative*/) && (order <0))) {
                                 stack.pop()
                                 output.append(o2)
-                        }
+                        }else break
                     }
                     if(output.last() in '0'..'9') {
                         output.append(" ")/*number separator*/
