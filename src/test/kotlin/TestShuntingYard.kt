@@ -8,30 +8,30 @@ import org.junit.Test
  */
 class TestShuntingYard {
     @Test fun testRPN1() {
-        assertThat(RPN("5 1 2+4*+3-"), `is`(14))
+        assertThat(evalRPN("5 1 2+4*+3-"), `is`(14))
     }
 
     @Test fun testRPN2() {
-        assertThat(RPN("25 20-50-"), `is`(-45))
+        assertThat(evalRPN("25 20-50-"), `is`(-45))
     }
 
     @Test fun testRPN3() {
-        assertThat(RPN("4 5^"), `is`(1024))
+        assertThat(evalRPN("4 5^"), `is`(1024))
     }
 
     @Test(expected = RuntimeException::class) fun testRPN_InvalidOperator() {
-        RPN("512D34")
+        evalRPN("512D34")
     }
 
     @Test fun testRPN_callback1() {
         var negative = false
-        RPN("5 1 2+4*+3-", {value -> if(!negative && value<0) negative = true })
+        evalRPN("5 1 2+4*+3-", { value -> if(!negative && value<0) negative = true })
         assertThat(negative,`is`(false))
     }
 
      @Test fun testRPN_callback2() {
         var negative = false
-        RPN("25 20-50-", {value -> if(!negative && value<0) negative = true })
+        evalRPN("25 20-50-", { value -> if(!negative && value<0) negative = true })
         assertThat(negative,`is`(true))
     }
 

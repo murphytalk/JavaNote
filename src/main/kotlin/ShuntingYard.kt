@@ -4,9 +4,9 @@ import java.util.*
 /**
  * Created by murphytalk on 5/22/2017.
  */
-//Reverse Polish Notation
+//Evaluate Reverse Polish Notation
 //callback gets called for each step of calculation result
-fun RPN(s: String, callback: ((Int) -> Unit)? = null): Int {
+fun evalRPN(s: String, callback: ((Int) -> Unit)? = null): Int {
     val stack = Stack<Int>()
     val num = StringBuilder()
     for (c in s) {
@@ -120,5 +120,5 @@ fun shuntingYard(s: String): String {
 }
 
 fun evalArithmetic(s: String, callback: ((Int) -> Unit)? = null): Int {
-    return RPN(shuntingYard(s), callback)
+    return evalRPN(shuntingYard(s), callback)
 }
