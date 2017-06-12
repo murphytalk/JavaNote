@@ -5,6 +5,11 @@ import org.fusesource.jansi.Ansi.ansi
 import org.fusesource.jansi.AnsiConsole
 import java.util.*
 
+private fun waitCommand():String{
+    val scanner = Scanner(System.`in`)
+    return scanner.next()
+}
+
 class Arithmetic(generator:ArithmeticGenerator, private val num:Int){
     data class Question (val question:String, val correctAnswer:Int, var answered:Boolean = false, var userAnswer:Int = 0)
     // array of generated questions
@@ -17,7 +22,7 @@ class Arithmetic(generator:ArithmeticGenerator, private val num:Int){
             val cmd = waitCommand()
             if (cmd[0] in '0'..'9') {
                 val idx = cmd[0]-'0'
-                var wait_for_answer = false
+                var wait_for_answer : Boolean
                 do{
                     println(ansi().eraseLine().fg(WHITE).a("Input answer for question #$idx"))
                     try {
@@ -56,24 +61,35 @@ class Arithmetic(generator:ArithmeticGenerator, private val num:Int){
             ++i
         }
         println()
-        println(ansi().fg(WHITE).a("Input [").fg(RED).a("0-9").fg(WHITE).a("] to answer a question or any other key to check answer"))
+        println(ansi().fg(WHITE).a("Input [").fg(RED).a("0-${num-1}").fg(WHITE).a("] to answer a question or any other key to check answer"))
         return correct
-    }
-
-    private fun waitCommand():String{
-        val scanner = Scanner(System.`in`)
-        return scanner.next()
     }
 }
 
 fun main(args:Array<String>){
+    var s = if(args.size == 1) args[0] else "10" //default is 10
+    var num : Int
+    while(true){
+        num = try {
+            s.toInt()
+        }
+        catch(e: NumberFormatException){
+            0
+        }
+        if(num <1 || num>10){
+            println("Need a number between 1 and 10")
+            s = waitCommand()
+        }
+        else break
+    }
+
     AnsiConsole.systemInstall()
 
     println(ansi().eraseScreen().fg(GREEN).a("Hi buddy, let's do some math!"))
     println()
 
     val generator = ArithmeticGenerator(4)
-    val arithmetic = Arithmetic(generator, 10)
+    val arithmetic = Arithmetic(generator, num)
 
     arithmetic.run()
 
