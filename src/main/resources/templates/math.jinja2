@@ -1,5 +1,34 @@
 {% extends "templates/layout.jinja2" %}
 
+{% block head %}
+    <link rel="stylesheet" href="/content/mathjax.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+{% endblock %}
+
 {% block content %}
-    TEST
+    <div id  = "question_numbers" style="text-align: right;">
+        <span id="question_no">1</span>/10<span/>
+    </div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div id="MathPreview" class="preview" style="">
+        $$ 56 \times 1 + 3123 - 1 $$
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <div class="input-group">
+        <span class="input-group-addon">Your answer</span>
+        <input id="answer" type="text" class="form-control" placeholder="Press enter to submit">
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#answer').val('');
+            $('#answer').focus();
+        });
+    </script>
 {% endblock %}

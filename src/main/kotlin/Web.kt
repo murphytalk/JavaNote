@@ -14,7 +14,7 @@ fun main(args:Array<String>){
 
     val templateEngine = JinjavaEngine(JinjavaConfig(), ClasspathResourceLocator())
     val commonAttributes = hashMapOf(
-                "title" to "Let's do some math" ,
+                "title" to "Math Homework" ,
                 "year" to 2018
     )
     get("/math", { _, _ -> ModelAndView(commonAttributes, "templates/math.jinja2") }, templateEngine)
