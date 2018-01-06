@@ -30,60 +30,34 @@
 
 {% block scripts %}
     <script>
-        var q;
-        //
-        //  Use a closure to hide the local variables from the
-        //  global namespace
-        //
-        (function () {
-            var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
-            var math = null;                // the element jax for the math output.
-
-            //
-            //  Get the element jax when MathJax has produced it.
-            //
-            QUEUE.Push(function () {
-                math = MathJax.Hub.getAllJax("MathOutput")[0];
-            });
-
-            //
-            //  The onchange event handler that typesets the
-            //  math entered by the user
-            //
-            window.UpdateMath = function (TeX) {
-                console.log(TeX);
-                QUEUE.Push(["Text",math,"\\displaystyle{"+TeX+"}"]);
-            }
-        })();
+        var q = null;
+        var math = null;
+        const QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 
 
         function populateMath(question) {
-            var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
-            var mathJaxStr = "$$ " + question + " $$";
-            console.log(mathJaxStr);
-            QUEUE.Push(["Text",math,"\\displaystyle{"+mathJaxStr+"}"]);
+            //console.log("v2 " + question);
+            QUEUE.Push(["Text",math,"\\displaystyle{"+question+"}"]);
         }
 
         //clear answer and let answer box has focus after page is loaded
         $(document).ready(function () {
             $('#answer').val('');
             $('#answer').focus();
+            QUEUE.Push(function () {
+                math = MathJax.Hub.getAllJax("MathOutput")[0];
+            });
         });
+
         //get questions
         $.getJSON("/math/questions", function (questions){
             //format as Latex
             $.each(questions, function(idx,question){
                 question['question'] = question['question'].replace(/\*/g," \\times ");
             });
-            console.log(questions);
+            //console.log(questions);
             q = questions[0]['question'];
-            window.setTimeout(function(){window.UpdateMath(q);},1000);
-            //var Tex = questions[0]['question'];
-            //QUEUE.Push(["Text",math,"\\displaystyle{"+TeX+"}"]);
-            //populateMath(questions[0]['question']);
+            window.setTimeout(function(){populateMath(q);},1000);
         });
     </script>
-
-
-
 {% endblock %}
