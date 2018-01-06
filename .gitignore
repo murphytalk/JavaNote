@@ -6,4 +6,4 @@ build/
 *.bak
 .idea/
 *.iml
-
+out/

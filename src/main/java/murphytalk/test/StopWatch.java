@@ -1,13 +1,13 @@
 package murphytalk.test;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.javasimon.Stopwatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StopWatch {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(Stopwatch.class);
     private static void _measure(String taskName, Runnable task, long repeat, boolean sample) {
         final Stopwatch stopwatch = SimonManager.getStopwatch(taskName);
         for (long i = 0; i < repeat; ++i) {
@@ -15,7 +15,7 @@ public class StopWatch {
             task.run();
             split.stop();
         }
-        logger.info (sample ? stopwatch.sample() : stopwatch);
+        logger.info ( (sample ? stopwatch.sample() : stopwatch).toString() );
     }
 
     public static void measure(String taskName, Runnable task, long repeat) {

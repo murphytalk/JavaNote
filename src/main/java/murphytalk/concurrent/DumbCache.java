@@ -1,8 +1,8 @@
 package murphytalk.concurrent;
 
 import com.google.common.collect.Maps;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -31,7 +31,7 @@ public interface DumbCache<K,V>{
 }
 
 abstract class AbstractDumbCache<K,V> implements DumbCache<K,V>{
-    protected static final Logger logger = LogManager.getLogger();
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractDumbCache.class);
     protected Function<K,V>  provider;
 
     @Override

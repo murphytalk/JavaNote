@@ -1,20 +1,21 @@
 package murphytalk.web
+import com.hubspot.jinjava.JinjavaConfig
+import com.hubspot.jinjava.loader.ClasspathResourceLocator
+import org.slf4j.LoggerFactory
 import spark.Spark.*
 import spark.ModelAndView
 import spark.template.jinjava.JinjavaEngine
-import java.util.HashMap
-
 
 
 fun main(args:Array<String>){
+    val logger = LoggerFactory.getLogger("murphytalk.web")
+    logger.info("start")
     staticFiles.location("/static")
-    get("/math", { request, response ->
-        val attributes = HashMap<String, Any>()
-        //attributes.put("message", "spark-template-jinjava")
-        val md = ModelAndView(attributes, "templates/math.jinja2")
-        val e = JinjavaEngine()
-        val s = e.render(md)
-        val a = 0
-        s
-    })
+
+    val templateEngine = JinjavaEngine(JinjavaConfig(), ClasspathResourceLocator())
+    val commonAttributes = hashMapOf(
+                "title" to "Let's do some math" ,
+                "year" to 2018
+    )
+    get("/math", { _, _ -> ModelAndView(commonAttributes, "templates/math.jinja2") }, templateEngine)
 }
