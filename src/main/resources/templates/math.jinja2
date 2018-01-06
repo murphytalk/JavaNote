@@ -2,7 +2,13 @@
 
 {% block head %}
     <link rel="stylesheet" href="/content/mathjax.css">
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'>
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -12,9 +18,7 @@
     <div class="progress">
         <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-    <div id="math" class="preview" style="">
-        $$ 5123+879+373+166 \times 31 $$
-    </div>
+    <div id="MathOutput" class="preview" style="">$${}$$</div>
 {% endblock %}
 
 {% block footer %}
@@ -26,9 +30,60 @@
 
 {% block scripts %}
     <script>
+        var q;
+        //
+        //  Use a closure to hide the local variables from the
+        //  global namespace
+        //
+        (function () {
+            var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
+            var math = null;                // the element jax for the math output.
+
+            //
+            //  Get the element jax when MathJax has produced it.
+            //
+            QUEUE.Push(function () {
+                math = MathJax.Hub.getAllJax("MathOutput")[0];
+            });
+
+            //
+            //  The onchange event handler that typesets the
+            //  math entered by the user
+            //
+            window.UpdateMath = function (TeX) {
+                console.log(TeX);
+                QUEUE.Push(["Text",math,"\\displaystyle{"+TeX+"}"]);
+            }
+        })();
+
+
+        function populateMath(question) {
+            var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
+            var mathJaxStr = "$$ " + question + " $$";
+            console.log(mathJaxStr);
+            QUEUE.Push(["Text",math,"\\displaystyle{"+mathJaxStr+"}"]);
+        }
+
+        //clear answer and let answer box has focus after page is loaded
         $(document).ready(function () {
             $('#answer').val('');
             $('#answer').focus();
         });
+        //get questions
+        $.getJSON("/math/questions", function (questions){
+            //format as Latex
+            $.each(questions, function(idx,question){
+                question['question'] = question['question'].replace(/\*/g," \\times ");
+            });
+            console.log(questions);
+            q = questions[0]['question'];
+            window.setTimeout(function(){window.UpdateMath(q);},1000);
+            //var Tex = questions[0]['question'];
+            //QUEUE.Push(["Text",math,"\\displaystyle{"+TeX+"}"]);
+            //populateMath(questions[0]['question']);
+        });
     </script>
+
+
+
 {% endblock %}
