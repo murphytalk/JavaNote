@@ -30,13 +30,12 @@
 
 {% block scripts %}
     <script>
-        var q = null;
+        var the_questions = null;
         var math = null;
         const QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 
-
         function populateMath(question) {
-            //console.log("v2 " + question);
+            //console.log("Q= " + question);
             QUEUE.Push(["Text",math,"\\displaystyle{"+question+"}"]);
         }
 
@@ -55,9 +54,16 @@
             $.each(questions, function(idx,question){
                 question['question'] = question['question'].replace(/\*/g," \\times ");
             });
+            the_questions = questions;
             //console.log(questions);
-            q = questions[0]['question'];
-            window.setTimeout(function(){populateMath(q);},1000);
+            window.setTimeout(function(){populateMath(the_questions[0]['question']);},1000);
+            /*
+            //todo: https://stackoverflow.com/questions/3014018/how-to-detect-when-mathjax-is-fully-loaded
+            //still cannot render when End signal is received.
+            MathJax.Hub.Register.StartupHook("End",function () {
+                populateMath(q);
+            });
+            */
         });
     </script>
 {% endblock %}
