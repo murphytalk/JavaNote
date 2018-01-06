@@ -5,15 +5,15 @@ import java.util.*
 /**
  * Created by murphytalk on 5/31/2017.
  */
-class ArithmeticGenerator constructor(val operatorNum:Int = 3,
-                                      val noNegative: Boolean = true,
-                                      val allowMultiplication: Boolean = true,
-                                      val allowDivision: Boolean = false,
+class ArithmeticGenerator constructor(private val operatorNum:Int = 3,
+                                      private val noNegative: Boolean = true,
+                                      private val allowMultiplication: Boolean = true,
+                                      private val allowDivision: Boolean = false,
                                       //default num digits for + -: 80% chance to generate a 3 digits number; 20% chance to generate a 4 digits number
                                       //needs to be sorted by chance in descending order
-                                      val addSubNumberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,3), Pair(20,4)),
+                                      private val addSubNumberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,3), Pair(20,4)),
                                       //default num digits for * /: 80% chance to generate a 1 digit number; 20% chance to generate a 2 digits number
-                                      val multiDivNumberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,1), Pair(20,2))){
+                                      private val multiDivNumberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,1), Pair(20,2))){
 
     private val random = Random()
 

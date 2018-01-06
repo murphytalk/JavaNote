@@ -26,11 +26,10 @@ public class Files {
                     .filter( ze -> !ze.isDirectory() )
                     .filter( ze -> ze.getName().equals(filename))
                     .findFirst().ifPresent( ze -> {
-                try (BufferedReader buffer = new BufferedReader(new InputStreamReader(zip.getInputStream(ze)))) {
-                    handler.accept(buffer.lines());
-                } catch (IOException e) {
-                }
-            });
+                        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(zip.getInputStream(ze)))) {
+                            handler.accept(buffer.lines());
+                        } catch (IOException e) {}
+                     });
         }
         catch (IOException e){}
     }

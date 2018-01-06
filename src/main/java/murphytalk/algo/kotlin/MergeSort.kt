@@ -9,7 +9,7 @@ class MergeSort<T : Comparable<T>>
  * @param size size of the elements to sort
  */
 (size: Int) : Sort<T> {
-    internal val workBuffer: Array<Comparable<T>?> = arrayOfNulls(size)
+    private val workBuffer: Array<Comparable<T>?> = arrayOfNulls(size)
 
     override fun sort(objects: Array<T>, begin: Int, end: Int) {
         val size = end - begin

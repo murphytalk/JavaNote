@@ -18,7 +18,7 @@ fun evalRPN(s: String, callback: ((Int) -> Unit)? = null): Int {
                 num.append(c)
             } else {
                 //the 2nd value could still be in buffer num
-                val v2 = if (num.length > 0) num.toString().toInt() else stack.pop()
+                val v2 = if (num.isNotEmpty()) num.toString().toInt() else stack.pop()
                 num.delete(0, num.length)
                 //pop the 1st value
                 val v1 = stack.pop()

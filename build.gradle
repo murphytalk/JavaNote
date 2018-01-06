@@ -20,6 +20,7 @@ repositories {
     jcenter()
     mavenCentral()
 }
+
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:21.0'
@@ -27,7 +28,8 @@ dependencies {
     compile 'org.apache.logging.log4j:log4j-api:2.8.2'
     compile 'org.apache.logging.log4j:log4j-core:2.8.2'
     compile 'org.fusesource.jansi:jansi:1.16'
-
+    compile "com.sparkjava:spark-core:$sparkjava_version"
+    compile "com.sparkjava:spark-template-jinjava:$sparkjava_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // Use JUnit test framework
@@ -43,7 +45,10 @@ targetCompatibility = 1.8
 // Define the main class for the application
 mainClassName = 'murphytalk.arithmetic.ArithmeticKt'
 buildscript {
-    ext.kotlin_version = '1.1.2-4'
+    ext{
+        kotlin_version = '1.2.10'
+        sparkjava_version = '2.7.1'
+    }
     repositories {
         mavenCentral()
     }
