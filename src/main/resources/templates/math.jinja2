@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block footer %}
-    <div class="input-group">
+    <div id="my_input" class="input-group">
         <span class="input-group-addon">Your answer</span>
         <input id="answer" type="text" class="form-control" placeholder="Press enter to submit">
     </div>
@@ -35,6 +35,12 @@
         var math = null;
         const QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 
+        function get_epoch(){
+            return new Date().getTime() / 1000;
+        }
+
+        var start_time = get_epoch();
+
         function populateMath(question) {
             //console.log("Q= " + question);
             QUEUE.Push(["Text",math,"\\displaystyle{"+question+"}"]);
@@ -44,7 +50,6 @@
             $('#cur_question').text(current_question+1);
             var percentage = 100 * (current_question+1)/the_questions.length;
             var style = "width: "+ percentage.toString() + "%";
-            console.log(style);
             var progress = $('#my_progress');
             progress.attr('style',style);
             progress.attr('aria-valuenow', percentage);
@@ -74,9 +79,18 @@
             //console.log("entered answer "+ answer);
             if(current_question >=0 ){
                 console.log("correct answer "+the_questions[current_question]['correctAnswer']);
+                the_questions[current_question]['times']+=1;
                 if(answer === the_questions[current_question]['correctAnswer']){
                     if(current_question == the_questions.length - 1 ){
                         //victory !
+
+                        var total_seconds = get_epoch() - start_time;
+                        var min = Math.floor(total_seconds/60);
+                        var sec = total_seconds % 60;
+                        //console.log("total time "+min+"m"+sec+"s");
+                        //console.log(the_questions);
+
+                        $("#my_input").hide();
                         return;
                     }
                     else{
@@ -114,9 +128,10 @@
             $.each(questions, function(idx,question){
                 question['question'] = question['question'].replace(/\*/g," \\times ");
                 question['correctAnswer'] = question['correctAnswer'].toString();
+                question['times'] = 0;
             });
             the_questions = questions;
-            //console.log(questions);
+            console.log(questions);
 
             $('#total_question').text(the_questions.length);
             $('#cur_question').text(1);

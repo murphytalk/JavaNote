@@ -11,7 +11,7 @@ import murphytalk.arithmetic.evalArithmetic
 
 
 object QuestionMaster{
-    data class Question (val question:String, val correctAnswer:Int, var answered:Boolean = false)
+    data class Question (val question:String, val correctAnswer:Int)
     //todo : load parameters from serialization
     var generator = ArithmeticGenerator(4)
     fun generate() : Array<Question>{
