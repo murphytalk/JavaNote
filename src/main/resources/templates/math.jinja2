@@ -12,6 +12,25 @@
 {% endblock %}
 
 {% block content %}
+    <div class="modal fade" id="my_result" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        You spend <span id="total_time_spent"></span> !
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div id="pieAccuracy"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id  = "question_numbers" style="text-align: right;">
         <span id="cur_question">1</span>/<span id="total_question">10</span>
     </div>
@@ -29,6 +48,9 @@
 {% endblock %}
 
 {% block scripts %}
+    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="/scripts/chart.js"></script>
     <script>
         var the_questions = null;
         var current_question = -1;
@@ -92,6 +114,20 @@
                         //console.log(the_questions);
 
                         $("#my_input").hide();
+
+                        var totalCorrect = 0;
+                        $.each(the_questions, function(idx,question){
+                            if(question['times'] === 1){
+                                totalCorrect++;
+                            }
+                        });
+                        var accuracyRate = totalCorrect / the_questions.length;
+                        var accuracy = [
+                            {name:'Correct',y:accuracyRate},
+                            {name:'Wrong',y:1-accuracyRate}
+                        ];
+                        $('#pieAccuracy').highcharts(pieChartOptions(null, 'My Accuracy Rate', accuracy, true));
+                        $("#my_result").modal();
                         return;
                     }
                     else{
