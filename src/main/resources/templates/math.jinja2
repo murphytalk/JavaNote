@@ -13,10 +13,10 @@
 
 {% block content %}
     <div id  = "question_numbers" style="text-align: right;">
-        <span id="question_no">1</span>/10<span/>
+        <span id="cur_question">1</span>/<span id="total_question">10</span>
     </div>
     <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="my_progress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <div id="MathOutput" class="preview" style="">$${}$$</div>
 {% endblock %}
@@ -31,6 +31,7 @@
 {% block scripts %}
     <script>
         var the_questions = null;
+        var current_question = -1;
         var math = null;
         const QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 
@@ -39,10 +40,49 @@
             QUEUE.Push(["Text",math,"\\displaystyle{"+question+"}"]);
         }
 
+        function updateProcess(){
+            $('#cur_question').text(current_question+1);
+            var percentage = 100 * (current_question+1)/the_questions.length;
+            var style = "width: "+ percentage.toString() + "%";
+            console.log(style);
+            var progress = $('#my_progress');
+            progress.attr('style',style);
+            progress.attr('aria-valuenow', percentage);
+        }
+
+        function checkAnswer(answer){
+            //console.log("entered answer "+ answer);
+            if(current_question >=0 ){
+                console.log("correct answer "+the_questions[current_question]['correctAnswer']);
+                if(answer === the_questions[current_question]['correctAnswer']){
+                    if(current_question == the_questions.length - 1 ){
+                        //victory !
+                        return;
+                    }
+                    else{
+                        the_questions[current_question]['answered'] = true;
+                        //move on to the next one
+                        current_question++;
+                        populateMath(the_questions[current_question]['question']);
+                        updateProcess();
+                    }
+                }
+                $('#answer').val('');
+                $('#answer').focus();
+            }
+        }
+
         //clear answer and let answer box has focus after page is loaded
         $(document).ready(function () {
-            $('#answer').val('');
-            $('#answer').focus();
+            var answer = $('#answer');
+            answer.val('');
+            answer.focus();
+            answer.on("keypress", function (e) {
+               if(e.which === 13){
+                    checkAnswer(this.value);
+               }
+            });
+
             QUEUE.Push(function () {
                 math = MathJax.Hub.getAllJax("MathOutput")[0];
             });
@@ -53,10 +93,15 @@
             //format as Latex
             $.each(questions, function(idx,question){
                 question['question'] = question['question'].replace(/\*/g," \\times ");
+                question['correctAnswer'] = question['correctAnswer'].toString();
             });
             the_questions = questions;
             //console.log(questions);
-            window.setTimeout(function(){populateMath(the_questions[0]['question']);},1000);
+
+            $('#total_question').text(the_questions.length);
+            $('#cur_question').text(1);
+
+            window.setTimeout(function(){populateMath(the_questions[0]['question']);current_question = 0;},2000);
             /*
             //todo: https://stackoverflow.com/questions/3014018/how-to-detect-when-mathjax-is-fully-loaded
             //still cannot render when End signal is received.
