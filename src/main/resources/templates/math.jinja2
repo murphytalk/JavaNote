@@ -19,10 +19,26 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">
-                        You spend <span id="total_time_spent"></span> !
+                        You spend <span id="total_time_spent"></span> to finish !
                     </h4>
                 </div>
                 <div class="modal-body">
+                    <!--
+                    <div>
+                        Averagely <span id="avg_time"></span> per question !
+                    </div>
+                    -->
+                    <p>Average Summary</p>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            How much time spent on one question
+                            <span id="avg_time" class="badge badge-success badge-pill"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            How many times to correctly answer one question
+                            <span id="avg_retry" class="badge badge-warning badge-pill"></span>
+                        </li>
+                    </ul>
                     <div id="pieAccuracy"></div>
                 </div>
                 <div class="modal-footer">
@@ -57,11 +73,24 @@
         var math = null;
         const QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 
-        function get_epoch(){
-            return new Date().getTime() / 1000;
+        var start_time =  new Date();
+
+        function get_epoch(dt){
+            return dt.getTime() / 1000;
         }
 
-        var start_time = get_epoch();
+        function format_time_in_m_s(tm){
+            var min = Math.floor(tm / 60);
+            var sec = Math.floor(tm % 60);
+            var str = "";
+            if(min>0){
+                str = min.toString() + " min ";
+            }
+            if(sec>0){
+                str += sec.toString() + " sec";
+            }
+            return str;
+        }
 
         function populateMath(question) {
             //console.log("Q= " + question);
@@ -107,20 +136,22 @@
                     if(current_question == the_questions.length - 1 ){
                         //victory !
 
-                        var total_seconds = get_epoch() - start_time;
-                        var min = Math.floor(total_seconds/60);
-                        var sec = total_seconds % 60;
-                        //console.log("total time "+min+"m"+sec+"s");
-                        //console.log(the_questions);
+                        var end_time = new Date();
+                        var total_time = get_epoch(end_time) - get_epoch(start_time);
+                        $("#total_time_spent").text(format_time_in_m_s(total_time));
+                        $("#avg_time").text(format_time_in_m_s(total_time/the_questions.length));
 
                         $("#my_input").hide();
 
                         var totalCorrect = 0;
+                        var totalTimes = 0;
                         $.each(the_questions, function(idx,question){
+                            totalTimes += question['times'];
                             if(question['times'] === 1){
                                 totalCorrect++;
                             }
                         });
+                        $("#avg_retry").text((totalTimes/the_questions.length).toFixed(1));
                         var accuracyRate = totalCorrect / the_questions.length;
                         var accuracy = [
                             {name:'Correct',y:accuracyRate},
@@ -170,7 +201,7 @@
             console.log(questions);
 
             $('#total_question').text(the_questions.length);
-            $('#cur_question').text(1);
+            $('#cur_question').text(0);
 
             window.setTimeout(function(){populateMath(the_questions[0]['question']);current_question = 0;},2000);
             /*
