@@ -12,7 +12,12 @@ import org.slf4j.Logger
 import java.io.File
 
 
-data class Config (val questionNumber:Int = 15, val operatorNum:Int = 4)
+data class Config  (val questionNumber:Int = 15, val operatorNum:Int = 4, val historyFile:String = "")
+data class History (val datetime:String,
+                    val questionNum: Int,
+                    val totalSeconds:Int,
+                    val totalAnswerTimes:Int,
+                    val accuracyRate:Float)
 
 class QuestionMaster(configFile:String){
     companion object {
@@ -35,6 +40,21 @@ class QuestionMaster(configFile:String){
     data class Question (val question:String, val correctAnswer:Int)
     fun generate() : Array<Question>{
         return Array(config.questionNumber, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
+    }
+
+    fun saveHistory(history:History){
+        val sep = ","
+        val newline = System.getProperty("line.separator")
+        val f = File(config.historyFile)
+        if(f.isFile && f.canWrite()) {
+            f.appendText(StringBuilder()
+                    .append(history.datetime).append(sep)
+                    .append(history.questionNum).append(sep)
+                    .append(history.totalSeconds).append(sep)
+                    .append(history.totalAnswerTimes).append(sep)
+                    .append(history.accuracyRate).append(newline)
+                    .toString())
+        }
     }
 }
 
@@ -60,6 +80,15 @@ fun main(args:Array<String>) {
             response.type("application/json")
             gson.toJson(questionMaster.generate())
         })
+        post("/submit") { req, _ ->
+            questionMaster.saveHistory(
+                    History(req.params("datetime"),
+                            req.params("questionNum").toInt(),
+                            req.params("totalSeconds").toInt(),
+                            req.params("totalAnswerTimes").toInt(),
+                            req.params("accuracyRate").toFloat()))
+            "ok"
+        }
     }
 }
 
