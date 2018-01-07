@@ -8,33 +8,59 @@ import spark.template.jinjava.JinjavaEngine
 import com.google.gson.Gson
 import murphytalk.arithmetic.ArithmeticGenerator
 import murphytalk.arithmetic.evalArithmetic
+import org.slf4j.Logger
+import java.io.File
 
 
-object QuestionMaster{
+data class Config (val questionNumber:Int = 15, val operatorNum:Int = 4)
+
+class QuestionMaster(configFile:String){
+    companion object {
+        val logger:Logger = LoggerFactory.getLogger(QuestionMaster.javaClass)
+    }
+    private val config : Config
+    private var generator:ArithmeticGenerator
+    init {
+        val f = File(if(configFile.isEmpty())  "~/.java-note.json"; else configFile)
+        config = if(f.isFile && f.canRead()){
+            logger.info("Reading config from {}",f.absolutePath)
+            Gson().fromJson(f.readText(), Config::class.java)
+        }
+        else{
+            logger.info("Using default config")
+            Config()
+        }
+        generator = ArithmeticGenerator(config.operatorNum)
+    }
     data class Question (val question:String, val correctAnswer:Int)
-    //todo : load parameters from serialization
-    var generator = ArithmeticGenerator(4)
     fun generate() : Array<Question>{
-        return Array(10, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
+        return Array(config.questionNumber, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
     }
 }
 
-fun main(args:Array<String>){
-    val logger = LoggerFactory.getLogger("murphytalk.web")
+
+
+fun main(args:Array<String>) {
     val gson = Gson()
-    logger.info("start")
+    val questionMaster = QuestionMaster(if(args !=null && args.isNotEmpty()) args[0] else "")
+
     staticFiles.location("/static")
 
     val templateEngine = JinjavaEngine(JinjavaConfig(), ClasspathResourceLocator())
     val commonAttributes = hashMapOf(
-                "title" to "Math Homework" ,
-                "year" to 2018
+            "title" to "Math Homework",
+            "year" to 2018
     )
 
-    get("/math", { _, _ -> ModelAndView(commonAttributes, "templates/math.jinja2") }, templateEngine)
-    get("/math/questions", { _, response ->
-        response.status(200)
-        response.type("application/json")
-        gson.toJson(QuestionMaster.generate())
-    })
+    //math
+    path("/math") {
+        get("", { _, _ -> ModelAndView(commonAttributes, "templates/math.jinja2") }, templateEngine)
+        get("/questions", { _, response ->
+            response.status(200)
+            response.type("application/json")
+            gson.toJson(questionMaster.generate())
+        })
+    }
 }
+
+

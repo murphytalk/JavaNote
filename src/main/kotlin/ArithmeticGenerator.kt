@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Created by murphytalk on 5/31/2017.
  */
-class ArithmeticGenerator constructor(private val operatorNum:Int = 3,
+class ArithmeticGenerator constructor(private val operatorNum:Int = 4,
                                       private val noNegative: Boolean = true,
                                       private val allowMultiplication: Boolean = true,
                                       private val allowDivision: Boolean = false,
