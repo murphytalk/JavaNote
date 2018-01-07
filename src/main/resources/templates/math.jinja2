@@ -48,6 +48,26 @@
             var progress = $('#my_progress');
             progress.attr('style',style);
             progress.attr('aria-valuenow', percentage);
+
+            const threshold = 25;
+            var progress_class = "progress-bar progress-bar-";
+            if(percentage>=threshold*3){
+                //>=75%
+                progress_class += "success";
+            }
+            else if(percentage>=threshold*2){
+                //50-75%
+                progress_class += "info";
+            }
+            else if(percentage>=threshold) {
+                //25-50%
+                progress_class += "warning";
+            }
+            else{
+                //<25
+                progress_class += "danger";
+            }
+            progress.attr('class',progress_class);
         }
 
         function checkAnswer(answer){
