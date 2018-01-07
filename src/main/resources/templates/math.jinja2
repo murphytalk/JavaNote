@@ -81,6 +81,7 @@
                 console.log("correct answer "+the_questions[current_question]['correctAnswer']);
                 the_questions[current_question]['times']+=1;
                 if(answer === the_questions[current_question]['correctAnswer']){
+                    updateProcess();
                     if(current_question == the_questions.length - 1 ){
                         //victory !
 
@@ -98,7 +99,6 @@
                         //move on to the next one
                         current_question++;
                         populateMath(the_questions[current_question]['question']);
-                        updateProcess();
                     }
                 }
                 $('#answer').val('');
