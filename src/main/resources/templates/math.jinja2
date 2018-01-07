@@ -161,7 +161,15 @@
                         $("#my_result").modal();
 
                         //submit result
-                        $
+                        var p = {
+                            yyyymmdd: start_time.getFullYear() * 10000 + (start_time.getMonth()+1)*100 + start_time.getDate(),
+                            hhmmss: start_time.getHours() * 10000 + start_time.getMinutes()*100 + start_time.getSeconds(),
+                            totalSeconds: Math.floor(total_time),
+                            totalAnsweredTimes: totalTimes,
+                            accuracyRate: accuracyRate
+                        };
+                        //console.log(p);
+                        $.post("/math/submit",p);
 
                         return;
                     }

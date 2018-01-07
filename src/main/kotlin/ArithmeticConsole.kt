@@ -10,7 +10,7 @@ private fun waitCommand():String{
     return scanner.next()
 }
 
-class Arithmetic(generator:ArithmeticGenerator, private val num:Int){
+class ArithmeticConsoleApp(generator:ArithmeticGenerator, private val num:Int){
     data class Question (val question:String, val correctAnswer:Int, var answered:Boolean = false, var userAnswer:Int = 0)
     // array of generated questions
     private val questions = Array(num, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
@@ -89,7 +89,7 @@ fun main(args:Array<String>){
     println()
 
     val generator = ArithmeticGenerator()
-    val arithmetic = Arithmetic(generator, num)
+    val arithmetic = ArithmeticConsoleApp(generator, num)
 
     arithmetic.run()
 

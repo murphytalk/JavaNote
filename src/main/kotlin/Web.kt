@@ -6,39 +6,25 @@ import spark.Spark.*
 import spark.ModelAndView
 import spark.template.jinjava.JinjavaEngine
 import com.google.gson.Gson
-import murphytalk.arithmetic.ArithmeticConfig
-import murphytalk.arithmetic.ArithmeticGenerator
-import murphytalk.arithmetic.evalArithmetic
 import murphytalk.utils.mergeReduce
+import org.codejargon.fluentjdbc.api.FluentJdbc
+import org.codejargon.fluentjdbc.api.FluentJdbcBuilder
+import org.codejargon.fluentjdbc.api.query.Query
 import org.slf4j.Logger
 import spark.Response
 import java.io.File
+import java.sql.DriverManager
 import java.time.LocalDateTime
+import javax.sql.DataSource
 
 
-data class MathConfig  (val questionNumber:Int = 15, val arithmeticConfig: ArithmeticConfig = ArithmeticConfig() , val historyDb:String = "jdbc:sqlite::memory:")
-data class Config (val mathConfig:MathConfig = MathConfig())
+data class Config (val dbUrl:String = "jdbc:sqlite::memory:",val mathConfig:MathConfig = MathConfig())
 
-data class History (val datetime:String,
-                    val questionNum: Int,
-                    val totalSeconds:Int,
-                    val totalAnswerTimes:Int,
-                    val accuracyRate:Float)
 
-class QuestionMaster(val config:MathConfig){
-    companion object {
-        val logger:Logger = LoggerFactory.getLogger(QuestionMaster.javaClass)
-    }
-    private var generator:ArithmeticGenerator = ArithmeticGenerator(config.arithmeticConfig)
-
-    data class Question (val question:String, val correctAnswer:Int)
-    fun generate() : Array<Question>{
-        return Array(config.questionNumber, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
-    }
-
-    fun saveHistory(history:History){
-    }
+class DAO(config:Config){
+    val q : Query = FluentJdbcBuilder().build().queryOn(DriverManager.getConnection(config.dbUrl))
 }
+
 
 fun main(args:Array<String>) {
     val logger:Logger = LoggerFactory.getLogger("Web.main")
@@ -60,7 +46,8 @@ fun main(args:Array<String>) {
                             logger.info("Using default config")
                             Config()
                         }
-    val questionMaster = QuestionMaster(config.mathConfig)
+    val dao = DAO(config)
+    val questionMaster = QuestionMaster(config.mathConfig,dao)
 
     staticFiles.location("/static")
 
@@ -84,11 +71,11 @@ fun main(args:Array<String>) {
         }
         post("/submit") { req, _ ->
             questionMaster.saveHistory(
-                    History(req.params("datetime"),
-                            req.params("questionNum").toInt(),
-                            req.params("totalSeconds").toInt(),
-                            req.params("totalAnswerTimes").toInt(),
-                            req.params("accuracyRate").toFloat()))
+                    History(req.queryParams("yyyymmdd").toInt(),
+                            req.queryParams("hhmmss").toInt(),
+                            req.queryParams("totalSeconds").toInt(),
+                            req.queryParams("totalAnsweredTimes").toInt(),
+                            req.queryParams("accuracyRate").toFloat()))
             "ok"
         }
     }
