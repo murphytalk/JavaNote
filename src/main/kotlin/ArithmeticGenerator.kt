@@ -5,28 +5,30 @@ import java.util.*
 /**
  * Created by murphytalk on 5/31/2017.
  */
-class ArithmeticGenerator constructor(private val operatorNum:Int = 4,
-                                      private val noNegative: Boolean = true,
-                                      private val allowMultiplication: Boolean = true,
-                                      private val allowDivision: Boolean = false,
-                                      //default num digits for + -: 80% chance to generate a 3 digits number; 20% chance to generate a 4 digits number
-                                      //needs to be sorted by chance in descending order
-                                      private val addSubNumberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,3), Pair(20,4)),
-                                      //default num digits for * /: 80% chance to generate a 1 digit number; 20% chance to generate a 2 digits number
-                                      private val multiDivNumberDigitsPossibilities: Array<Pair<Int,Int>> = arrayOf(Pair(80,1), Pair(20,2))){
+data class DigitsPossibility(val percentage:Int, val digits:Int)
+data class ArithmeticConfig (val operatorNum:Int = 4,
+                             val noNegative: Boolean = true,
+                             val allowMultiplication: Boolean = true,
+                             val allowDivision: Boolean = false,
+                             //default num digits for + -: 80% chance to generate a 3 digits number; 20% chance to generate a 4 digits number
+                             //needs to be sorted by chance in descending order
+                             val addSubNumberDigitsPossibilities: Array<DigitsPossibility> = arrayOf(DigitsPossibility(80,3), DigitsPossibility(20,4)),
+                             //default num digits for * /: 80% chance to generate a 1 digit number; 20% chance to generate a 2 digits number
+                             val multiDivNumberDigitsPossibilities: Array<DigitsPossibility> = arrayOf(DigitsPossibility(80,1), DigitsPossibility(20,2)))
 
+class ArithmeticGenerator(val config:ArithmeticConfig = ArithmeticConfig()){
     private val random = Random()
 
     private fun generateOperator(): String {
         //division can only be allowed when multiplication is allowed
-        val possibleOperators =  if(allowMultiplication) {if(allowDivision) arrayOf('+','-','*','/') else arrayOf('+','-','*')} else arrayOf('+','-')
+        val possibleOperators =  if(config.allowMultiplication) {if(config.allowDivision) arrayOf('+','-','*','/') else arrayOf('+','-','*')} else arrayOf('+','-')
         return possibleOperators[random.nextInt(possibleOperators.size)].toString()
     }
 
     private fun generateNumber(operatorIsAddSub:Boolean): Int {
         var p = random.nextInt(101) // an integer within [0, 100]
         var v = 0
-        val possibilities = if(operatorIsAddSub) addSubNumberDigitsPossibilities else multiDivNumberDigitsPossibilities
+        val possibilities = if(operatorIsAddSub) config.addSubNumberDigitsPossibilities else config.multiDivNumberDigitsPossibilities
         for ((possibility, digits) in possibilities){
             if(p<=possibility){
                 do {
@@ -53,11 +55,11 @@ class ArithmeticGenerator constructor(private val operatorNum:Int = 4,
 
         var negative = false
         var callback: ((Int) -> Unit)?  = null
-        if(noNegative) callback = { value:Int -> if(!negative && value<0) negative = true}
+        if(config.noNegative) callback = { value:Int -> if(!negative && value<0) negative = true}
 
         while(true) {
             sb.append(generateNumber(true))
-            while (numOfOperator < operatorNum) {
+            while (numOfOperator < config.operatorNum) {
                 val op = generateOperator()
                 sb.append(op).append(generateNumber(isAddSub(op)))
                 ++numOfOperator

@@ -31,6 +31,7 @@ dependencies {
     compile "com.sparkjava:spark-template-jinjava:$sparkjava_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.codejargon:fluentjdbc:1.8.3'
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'

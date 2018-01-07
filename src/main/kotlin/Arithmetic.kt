@@ -88,7 +88,7 @@ fun main(args:Array<String>){
     println(ansi().eraseScreen().fg(GREEN).a("Hi buddy, let's do some math!"))
     println()
 
-    val generator = ArithmeticGenerator(4)
+    val generator = ArithmeticGenerator()
     val arithmetic = Arithmetic(generator, num)
 
     arithmetic.run()
