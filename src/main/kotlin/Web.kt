@@ -36,7 +36,7 @@ fun main(args:Array<String>) {
     }
 
     val gson = Gson()
-    val configFile = if(args !=null && args.isNotEmpty()) args[0] else ""
+    val configFile = if( args.isNotEmpty()) args[0] else ""
     val f = File(if(configFile.isEmpty())  "~/.java-note.json"; else configFile)
 
     val config:Config = if(f.isFile && f.canRead()){
