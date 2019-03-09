@@ -3,7 +3,7 @@ package murphytalk.concurrent;
 import murphytalk.test.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;
-import sun.misc.Contended;
+//import jdk.internal.vm.annotation.Contended;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -27,7 +27,7 @@ public class TestFalseSharing {
     }
 
     private static class HasCacheLinePadding{
-        @Contended
+        //@Contended
         public volatile long valueA;
         public volatile long valueB;
     }
