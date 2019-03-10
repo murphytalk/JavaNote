@@ -22,11 +22,11 @@ public class TestDumbCache {
 
     @Parameterized.Parameters
     public static Collection<Class> instantiate(){
-        return Arrays.asList(new Class[] {/*DumbCacheCondition.class,*/ DumbCacheWrapper.class});
+        return Arrays.asList(new Class[] {DumbCacheWrapper.class});
     }
 
-    public TestDumbCache(Class testClass) throws IllegalAccessException, InstantiationException {
-        cache = (DumbCache<Integer,String>)testClass.newInstance();
+    public TestDumbCache(Class<DumbCache<Integer, String>> testClass) throws IllegalAccessException, InstantiationException {
+        cache = testClass.newInstance();
         cache.init (
                 // this provider converts key to string if key is larger than 10 otherwise return null (to simulate unavailable data)
                 // and it takes DELAY ms to return if key is larger than 100 or less than 10 - see the thread testing below
@@ -77,7 +77,7 @@ public class TestDumbCache {
         Thread t1 = new Thread( () ->{
             long start = System.currentTimeMillis();
             String s = cache.get(key);
-            logger.info("thread 1 took {} ms",System.currentTimeMillis()-start);
+            logger.info("{} took {} ms",Thread.currentThread().getName(), System.currentTimeMillis()-start);
 
             assertThat(s,is(value));
         });
@@ -86,7 +86,7 @@ public class TestDumbCache {
             long start = System.currentTimeMillis();
             String s = cache.get(key);
             long delta = System.currentTimeMillis()-start;
-            logger.info("thread 2 took {} ms",delta);
+            logger.info("{} took {} ms",Thread.currentThread().getName(), delta);
 
             //thread 2 will get blocked for at least DELAY sec
             assertTrue(delta>=DELAY);
@@ -97,7 +97,14 @@ public class TestDumbCache {
         t2.start();
         t1.join();
         t2.join();
-    }
+
+        long start = System.currentTimeMillis();
+        String s = cache.get(key);
+        long delta = System.currentTimeMillis()-start;
+        logger.info("{} took {} ms",Thread.currentThread().getName(), delta);
+        assertTrue(delta<DELAY); //already in cache
+        assertThat(s,is(value));
+ }
 
     @Test
     public void testTwoTreadsDiffKey() throws InterruptedException {
@@ -111,7 +118,7 @@ public class TestDumbCache {
             long start = System.currentTimeMillis();
             String s = cache.get(key1);
             long delta = System.currentTimeMillis()-start;
-            logger.info("thread 1 took {} ms",System.currentTimeMillis()-start);
+            logger.info("{} took {} ms", Thread.currentThread().getName(), System.currentTimeMillis()-start);
 
             assertTrue(delta>=DELAY); //thread 1 was blocked
             assertThat(s,is(value1));
@@ -121,7 +128,7 @@ public class TestDumbCache {
             long start = System.currentTimeMillis();
             String s = cache.get(key2);
             long delta = System.currentTimeMillis()-start;
-            logger.info("thread 2 took {} ms",delta);
+            logger.info("{} took {} ms",Thread.currentThread().getName(), delta);
 
             assertTrue(delta<DELAY); //thread 2 should not get blocked, even thread1 takes DELAY ms to finish
             assertThat(s,is(value2));

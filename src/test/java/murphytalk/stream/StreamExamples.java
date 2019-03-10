@@ -17,7 +17,10 @@ import java.util.stream.Stream;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+
+//https://developer.ibm.com/articles/j-java-streams-3-brian-goetz/
 
 public class StreamExamples {
     private static class MyClass{
@@ -28,6 +31,10 @@ public class StreamExamples {
             this.s = s;
             this.i = i;
             this.d = d;
+        }
+
+        public Optional<String> svalue(){
+            return Optional.ofNullable(s);
         }
 
         @Override
@@ -70,11 +77,60 @@ public class StreamExamples {
         assertFalse(m1.equals(m2));
     }
 
+    @Test
+    public void testOptional(){
+        {
+            Optional<MyClass> m = Optional.empty();
+            Optional<String> s = m.flatMap(MyClass::svalue);
+            assertFalse(s.isPresent());
+        }
+
+        {
+            Optional<MyClass> m = Optional.of(new MyClass("xyz", 1, 0));
+            Optional<String> s = m.flatMap(MyClass::svalue);
+            assertEquals(s.get(), "xyz");
+        }
+
+        Set<String> r = new HashSet<>();
+        {
+            MyClass e = new MyClass(null, 0, 1);
+            e.svalue().ifPresent(r::add);
+            assertTrue(r.isEmpty());
+        }
+
+        {
+            MyClass e = new MyClass("abc", 0, 1);
+            e.svalue().ifPresent(r::add);
+            assertTrue(r.contains("abc"));
+        }
+    }
+
+    @Test
+    public void testCountryLangSets (){
+        Stream<Locale> locales = Stream.of(Locale.getAvailableLocales());
+        Map<String, Set<String>> countryLanguageSets = locales.collect(
+                Collectors.toMap(
+                        Locale::getDisplayCountry,
+                        l -> Collections.singleton(l.getDisplayLanguage()),
+                        (a, b) -> {
+                            // Union of a and b
+                            Set<String> union = new HashSet<>(a);
+                            union.addAll(b);
+                            return union;
+                        }
+                        )
+        );
+        String[] lang = {"French", "German", "Italian"};
+        assertTrue(countryLanguageSets.get("Switzerland").containsAll(Arrays.asList(lang)));
+    }
+
+    final Pattern word = Pattern.compile("\\w+");
+    final Set<String> excludedWords = new HashSet<>(Arrays.asList("a", "the", "of", "and" ));
     private void getTopFrequentWords(Stream<String> words, int top, Consumer<String> onWord){
-        final Pattern word = Pattern.compile("\\w+");
         words.flatMap(line -> Arrays.asList(line.split("\\b")).stream())  //collapse from stream of stream of string to stream of string
                     .map(s -> s.toLowerCase())
                     .filter( w -> word.matcher(w).matches())
+                    .filter( w -> !excludedWords.contains(w))
                     .collect(Collectors.groupingBy(w -> w, Collectors.counting()))
                     .entrySet().stream()
                     .sorted(Comparator.comparing(Map.Entry<String,Long>::getValue).reversed())

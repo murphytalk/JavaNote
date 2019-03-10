@@ -22,8 +22,8 @@ public class TestDumbCacheMiss {
         return Arrays.asList(new Class[] {DumbCacheWrapper.class});
     }
 
-    public TestDumbCacheMiss(Class cl) throws IllegalAccessException, InstantiationException {
-        cache = (DumbCache<String,String>)cl.newInstance();
+    public TestDumbCacheMiss(Class<DumbCache<String, String>> cl) throws IllegalAccessException, InstantiationException {
+        cache = cl.newInstance();
     }
 
     @Test
