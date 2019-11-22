@@ -23,7 +23,7 @@ class QuestionMaster(private val config:MathConfig, private val dao:DAO) {
     data class Question(val question: String, val correctAnswer: Int)
 
     fun generate(): Array<Question> {
-        return Array(config.questionNumber, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
+        return Array(config.questionNumber) { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) }
     }
 
     fun saveHistory(history:History){

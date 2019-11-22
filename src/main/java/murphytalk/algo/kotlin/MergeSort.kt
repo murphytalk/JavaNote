@@ -24,7 +24,7 @@ class MergeSort<T : Comparable<T>>
     }
 
     companion object {
-        val SMALL_ENOUGH = 16
+        const val SMALL_ENOUGH = 16
 
         /**
          * Merge the two halves of the array : [begin,mid) and [mid,length) .
@@ -52,7 +52,7 @@ class MergeSort<T : Comparable<T>>
          loop until one of the halves is empty.
         */
             while (left != leftEnd && right != rightEnd) {
-                if (objects[left].compareTo(objects[right]) <= 0) {
+                if (objects[left] <= objects[right]) {
                     //[left] is smaller than or equals to [right], pick and copy [left] as the winner
                     work[pos++] = objects[left++]
                 } else {

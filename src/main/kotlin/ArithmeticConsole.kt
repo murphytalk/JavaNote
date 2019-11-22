@@ -13,7 +13,7 @@ private fun waitCommand():String{
 class ArithmeticConsoleApp(generator:ArithmeticGenerator, private val num:Int){
     data class Question (val question:String, val correctAnswer:Int, var answered:Boolean = false, var userAnswer:Int = 0)
     // array of generated questions
-    private val questions = Array(num, { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) })
+    private val questions = Array(num) { _ -> val s = generator.generate(); Question(s, evalArithmetic(s)) }
 
     fun run() {
         var highlightWrong = false

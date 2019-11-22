@@ -1,6 +1,8 @@
 package murphytalk.arithmetic
 
 import java.util.*
+import kotlin.math.floor
+import kotlin.math.pow
 
 /**
  * Created by murphytalk on 5/31/2017.
@@ -16,7 +18,7 @@ data class ArithmeticConfig (val operatorNum:Int = 4,
                              //default num digits for * /: 80% chance to generate a 1 digit number; 20% chance to generate a 2 digits number
                              val multiDivNumberDigitsPossibilities: Array<DigitsPossibility> = arrayOf(DigitsPossibility(80,1), DigitsPossibility(20,2)))
 
-class ArithmeticGenerator(val config:ArithmeticConfig = ArithmeticConfig()){
+class ArithmeticGenerator(private val config:ArithmeticConfig = ArithmeticConfig()){
     private val random = Random()
 
     private fun generateOperator(): String {
@@ -32,7 +34,7 @@ class ArithmeticGenerator(val config:ArithmeticConfig = ArithmeticConfig()){
         for ((possibility, digits) in possibilities){
             if(p<=possibility){
                 do {
-                    v = Math.floor(random.nextFloat() * Math.pow(10.0, digits.toDouble())).toInt()
+                    v = floor(random.nextFloat() * 10.0.pow(digits.toDouble())).toInt()
                 } while(v == 0)
                 break
             }
