@@ -6,8 +6,7 @@ import spark.Spark.*
 import spark.ModelAndView
 import spark.template.jinjava.JinjavaEngine
 import com.google.gson.Gson
-import murphytalk.utils.mergeReduce
-import org.codejargon.fluentjdbc.api.FluentJdbc
+import mergeReduce
 import org.codejargon.fluentjdbc.api.FluentJdbcBuilder
 import org.codejargon.fluentjdbc.api.query.Query
 import org.slf4j.Logger
@@ -15,7 +14,6 @@ import spark.Response
 import java.io.File
 import java.sql.DriverManager
 import java.time.LocalDateTime
-import javax.sql.DataSource
 
 
 data class Config (val dbUrl:String = "jdbc:sqlite::memory:",val mathConfig:MathConfig = MathConfig())
