@@ -33,6 +33,9 @@ dependencies {
     // Simon metrics
     implementation("org.javasimon:javasimon-core:4.1.2")
 
+    // log
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+
     //  The followings are for the arithmetic console and web app
     /// sparkjava web framework
     implementation("com.sparkjava:spark-core:$sparkjava_version")
@@ -62,9 +65,30 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks {
+    // the followings are for standard test task
     test {
         testLogging.showExceptions = true
+        testLogging.showStandardStreams = true
     }
+    // the followings are used when test-logger plugin is used
+    testlogger {
+        //theme = "standard"
+        showExceptions = true
+        showStackTraces = true
+        showFullStackTraces = false
+        showCauses = true
+        slowThreshold = 2000
+        showSummary = true
+        showSimpleNames = false
+        showPassed = true
+        showSkipped = true
+        showFailed = true
+        showStandardStreams = true
+        showPassedStandardStreams = true
+        showSkippedStandardStreams = true
+        showFailedStandardStreams = true
+    }
+
     shadowJar{
         archiveBaseName.set("JavaNote")
         archiveVersion.set(projectVersion)
@@ -74,6 +98,7 @@ tasks {
         dependsOn(shadowJar)
     }
 }
+
 
 tasks.register("listrepos"){
     println("Repositories:")

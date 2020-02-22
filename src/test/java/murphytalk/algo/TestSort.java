@@ -31,7 +31,8 @@ public class TestSort {
 
     static {
         //make sure this only runs once, so the runtime of each individual test are comparable.
-        Object [] random = (new Random()).ints(size).boxed().toArray();
+        //box it as we want an array of Integer objects
+        var random = (new Random()).ints(size).boxed().toArray();
         data = Arrays.copyOf( random, random.length, Integer[].class);
         sortedData = data.clone();
         Arrays.sort(sortedData);
