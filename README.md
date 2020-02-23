@@ -1,5 +1,6 @@
 # README
 
+![Java CI](https://github.com/murphytalk/JavaNote/workflows/Java%20CI/badge.svg)
 [![Build Status](https://travis-ci.org/murphytalk/JavaNote.svg?branch=master)](https://travis-ci.org/murphytalk/JavaNote)
 
 This is my little playground of Java and the other JVM languages (e.g. Kotlin). 
