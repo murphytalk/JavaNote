@@ -42,16 +42,14 @@ class MergeSort<T : Comparable<T>>
          */
         fun <T : Comparable<T>> merge(objects: Array<T>, begin: Int, end: Int, mid: Int, work: Array<T>) {
             var left = begin
-            val leftEnd = mid
             var right = mid
-            val rightEnd = end
             var pos = 0
             /*
-         Note the left half and the right half themselves are already sorted,
-         We only compare the head of each part and pick the smaller one as winner to be copied to the work buffer,
-         loop until one of the halves is empty.
-        */
-            while (left != leftEnd && right != rightEnd) {
+             Note the left half and the right half themselves are already sorted,
+             We only compare the head of each part and pick the smaller one as winner to be copied to the work buffer,
+             loop until one of the halves is empty.
+            */
+            while (left != mid && right != end) {
                 if (objects[left] <= objects[right]) {
                     //[left] is smaller than or equals to [right], pick and copy [left] as the winner
                     work[pos++] = objects[left++]
@@ -60,17 +58,17 @@ class MergeSort<T : Comparable<T>>
                 }
             }
             /*
-          Now at least one half is empty, all the leftover in the other half are larger than any of those
-          originally in the now emptied half. So we just append the (sorted) leftover to work buffer.
-         */
+              Now at least one half is empty, all the leftover in the other half are larger than any of those
+              originally in the now emptied half. So we just append the (sorted) leftover to work buffer.
+            */
             var first = end
             var last = end
-            if (left == leftEnd) {
+            if (left == mid) {
                 first = right
-                last = rightEnd
-            } else if (right == rightEnd) {
+                last = end
+            } else if (right == end) {
                 first = left
-                last = leftEnd
+                last = mid
             }
             if (first != end && last != end) {
                 val sizeToCopy = last - first

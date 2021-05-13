@@ -5,7 +5,7 @@ val projectVersion = "1.0"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.3.61"
+    id("org.jetbrains.kotlin.jvm") version "1.4.20"
     // java plugin is implicit
     id("com.adarshr.test-logger") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
@@ -22,8 +22,8 @@ repositories {
 val sparkjava_version = "2.7.1"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_13
-    targetCompatibility = JavaVersion.VERSION_13
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
@@ -60,8 +60,12 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "12"
+        jvmTarget = "11"
     }
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs = listOf("-Xlint:unchecked")
 }
 
 tasks {
