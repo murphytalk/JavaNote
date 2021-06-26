@@ -5,7 +5,7 @@ val projectVersion = "1.0"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.4.20"
+    id("org.jetbrains.kotlin.jvm") version "1.5.0-RC"
     // java plugin is implicit
     id("com.adarshr.test-logger") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
