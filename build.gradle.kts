@@ -1,29 +1,26 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val projectVersion = "1.0"
 
 plugins {
-    // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.5.0-RC"
+    id("java")
+    kotlin("jvm") version "1.9.23"
     // java plugin is implicit
-    id("com.adarshr.test-logger") version "2.0.0"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+//    jcenter()
     mavenCentral()
 }
 
 val sparkjava_version = "2.7.1"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
@@ -52,54 +49,21 @@ dependencies {
     //
 
     // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation(kotlin("test"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+tasks.test {
+    useJUnitPlatform() // JUnitPlatform for tests
 }
 
-tasks.withType<JavaCompile> {
-    options.compilerArgs = listOf("-Xlint:unchecked")
+kotlin { // Extension for easy setup
+    jvmToolchain(21)
 }
 
 tasks {
     // the followings are for standard test task
     test {
-        testLogging.showExceptions = true
-        testLogging.showStandardStreams = true
-    }
-    // the followings are used when test-logger plugin is used
-    testlogger {
-        //theme = "standard"
-        showExceptions = true
-        showStackTraces = true
-        showFullStackTraces = false
-        showCauses = true
-        slowThreshold = 2000
-        showSummary = true
-        showSimpleNames = false
-        showPassed = true
-        showSkipped = true
-        showFailed = true
-        showStandardStreams = true
-        showPassedStandardStreams = true
-        showSkippedStandardStreams = true
-        showFailedStandardStreams = true
-    }
-
-    shadowJar{
-        archiveBaseName.set("JavaNote")
-        archiveVersion.set(projectVersion)
-        exclude ("**/test/**")
-    }
-    build {
-        dependsOn(shadowJar)
+        useJUnit()
     }
 }
 
