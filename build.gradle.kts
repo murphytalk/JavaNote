@@ -24,9 +24,6 @@ java {
 }
 
 dependencies {
-    //kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
     // Simon metrics
     implementation("org.javasimon:javasimon-core:4.1.2")
 
